@@ -18,6 +18,7 @@ import GlassCard from "@/components/GlassCard";
 import SummaryOutput from "@/components/SummaryOutput";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getUserSubjects } from "@/lib/userPrefs";
 
 type SourceType = "text" | "pdf" | "youtube";
 type OutputMode = "summary" | "quiz" | "flashcards";
@@ -102,13 +103,28 @@ const Study = () => {
       className="max-w-7xl mx-auto space-y-6"
     >
       {/* Header */}
-      <div className="space-y-1">
-        <h1 className="text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
-          <Sparkles className="h-6 w-6 text-primary" /> AI Study Generator
-        </h1>
-        <p className="text-muted-foreground text-sm">
-          Paste your notes, upload a document, or drop a link — and let AI do the heavy lifting.
-        </p>
+      <div className="space-y-3">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
+            <Sparkles className="h-6 w-6 text-primary" /> AI Study Generator
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            Paste your notes, upload a document, or drop a link — and let AI do the heavy lifting.
+          </p>
+        </div>
+        {/* Subject quick-filter chips */}
+        {getUserSubjects().length > 0 && (
+          <div className="flex gap-1.5 flex-wrap">
+            {getUserSubjects().map((subj) => (
+              <span
+                key={subj}
+                className="inline-flex items-center rounded-full bg-secondary/60 border border-border/30 px-2.5 py-1 text-[10px] font-medium text-muted-foreground"
+              >
+                {subj}
+              </span>
+            ))}
+          </div>
+        )}
       </div>
 
       {/* Two-column grid */}

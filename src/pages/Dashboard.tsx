@@ -6,6 +6,7 @@ import EmptyState from "@/components/EmptyState";
 import { useNavigate } from "react-router-dom";
 import { useCountUp } from "@/hooks/useCountUp";
 import { getSessions, getStats, getContinueItem, type StudySession, type ContinueItem } from "@/lib/store";
+import { getUserName } from "@/lib/userPrefs";
 import { useState, useEffect } from "react";
 
 /* ── Animated stat card ────────────────────────── */
@@ -72,7 +73,7 @@ const Dashboard = () => {
         <div className="relative space-y-1">
           <p className="text-xs text-muted-foreground">{getFormattedDate()}</p>
           <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
-            {getGreeting()} <Zap className="h-6 w-6 text-primary animate-pulse" />
+            {getGreeting()}, {getUserName() || "Hey there"} <Zap className="h-6 w-6 text-primary animate-pulse" />
           </h1>
           <p className="text-sm text-muted-foreground">
             {stats.streak > 0 ? "Ready to sprint?" : "Start studying today to begin your streak 🔥"}
