@@ -1,7 +1,10 @@
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { BarChart3, Flame, Clock, Target, TrendingUp, BookOpen, Layers, HelpCircle } from "lucide-react";
+import { BarChart3, Flame, BookOpen, Layers, HelpCircle } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
+import EmptyState from "@/components/EmptyState";
 import { cn } from "@/lib/utils";
+import { getStats, type UserStats } from "@/lib/store";
 import {
   LineChart,
   Line,
@@ -17,24 +20,7 @@ import {
   CartesianGrid,
 } from "recharts";
 
-/* ── Data ──────────────────────────────────────── */
-
-const allTimeStats = [
-  { label: "Total Sessions", value: "84", icon: BookOpen, color: "text-primary" },
-  { label: "Cards Reviewed", value: "612", icon: Layers, color: "text-accent" },
-  { label: "Quizzes Taken", value: "38", icon: HelpCircle, color: "text-emerald-400" },
-  { label: "Best Streak", value: "21 days", icon: Flame, color: "text-accent" },
-];
-
-// Heatmap data (7 weeks × 7 days)
-const heatmapWeeks = Array.from({ length: 7 }, (_, w) =>
-  Array.from({ length: 7 }, (_, d) => {
-    const rand = Math.random();
-    if (rand > 0.7) return Math.floor(Math.random() * 4) + 3;
-    if (rand > 0.35) return Math.floor(Math.random() * 3) + 1;
-    return 0;
-  })
-);
+/* ── Heatmap helpers ──────────────────────────── */
 
 const dayLabels = ["Mon", "", "Wed", "", "Fri", "", "Sun"];
 
@@ -45,35 +31,30 @@ function heatColor(count: number) {
   return "bg-primary/80";
 }
 
-// Quiz scores over time
-const quizScores = [
-  { date: "Feb 1", score: 65 },
-  { date: "Feb 5", score: 72 },
-  { date: "Feb 9", score: 68 },
-  { date: "Feb 14", score: 78 },
-  { date: "Feb 18", score: 82 },
-  { date: "Feb 22", score: 75 },
-  { date: "Feb 26", score: 88 },
-  { date: "Mar 1", score: 85 },
-  { date: "Mar 4", score: 91 },
-  { date: "Mar 7", score: 87 },
-];
+function buildHeatmapWeeks(heatmap: Record<string, number>): number[][] {
+  const weeks: number[][] = [];
+  const today = new Date();
+  // Go back 7 weeks
+  for (let w = 6; w >= 0; w--) {
+    const week: number[] = [];
+    for (let d = 0; d < 7; d++) {
+      const date = new Date(today);
+      date.setDate(today.getDate() - (w * 7 + (6 - d)));
+      const key = date.toISOString().slice(0, 10);
+      week.push(heatmap[key] || 0);
+    }
+    weeks.push(week);
+  }
+  return weeks;
+}
 
-// Subject breakdown
-const subjectBreakdown = [
-  { name: "Chemistry", value: 28, color: "hsl(25, 95%, 53%)" },
-  { name: "History", value: 22, color: "hsl(38, 92%, 50%)" },
-  { name: "Math", value: 20, color: "hsl(239, 84%, 67%)" },
-  { name: "Biology", value: 18, color: "hsl(142, 71%, 45%)" },
-  { name: "Physics", value: 12, color: "hsl(187, 85%, 53%)" },
-];
-
-// Flashcard mastery per deck
-const deckMastery = [
-  { deck: "Chemistry", mastered: 32, learning: 16 },
-  { deck: "History", mastered: 18, learning: 6 },
-  { deck: "Math", mastered: 5, learning: 11 },
-  { deck: "Biology", mastered: 22, learning: 8 },
+const SUBJECT_COLORS = [
+  "hsl(239, 84%, 67%)",
+  "hsl(38, 92%, 50%)",
+  "hsl(142, 71%, 45%)",
+  "hsl(25, 95%, 53%)",
+  "hsl(187, 85%, 53%)",
+  "hsl(330, 80%, 60%)",
 ];
 
 /* ── Animation ─────────────────────────────────── */
@@ -99,7 +80,32 @@ const CustomTooltip = ({ active, payload, label }: any) => {
 /* ── Component ─────────────────────────────────── */
 
 const Progress = () => {
-  const streakDays = 5;
+  const [stats, setStats] = useState<UserStats>(getStats());
+
+  useEffect(() => {
+    setStats(getStats());
+  }, []);
+
+  const heatmapWeeks = buildHeatmapWeeks(stats.heatmap);
+  const hasData = stats.totalSessions > 0;
+  const hasQuizData = stats.quizScores.length > 0;
+  const hasSubjectData = Object.keys(stats.subjectTime).length > 0;
+  const hasDeckData = stats.deckMastery.length > 0;
+
+  const subjectBreakdown = Object.entries(stats.subjectTime).map(([name, value], i) => ({
+    name,
+    value,
+    color: SUBJECT_COLORS[i % SUBJECT_COLORS.length],
+  }));
+
+  const totalSubjectTime = subjectBreakdown.reduce((s, e) => s + e.value, 0);
+
+  const allTimeStats = [
+    { label: "Total Sessions", value: stats.totalSessions > 0 ? String(stats.totalSessions) : "--", icon: BookOpen, color: "text-primary" },
+    { label: "Cards Reviewed", value: stats.totalCardsReviewed > 0 ? String(stats.totalCardsReviewed) : "--", icon: Layers, color: "text-accent" },
+    { label: "Quizzes Taken", value: stats.totalQuizzesTaken > 0 ? String(stats.totalQuizzesTaken) : "--", icon: HelpCircle, color: "text-emerald-400" },
+    { label: "Best Streak", value: stats.bestStreak > 0 ? `${stats.bestStreak} days` : "--", icon: Flame, color: "text-accent" },
+  ];
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="max-w-5xl mx-auto space-y-8">
@@ -111,17 +117,16 @@ const Progress = () => {
           </h1>
           <p className="text-muted-foreground text-sm">Track your learning journey and stay consistent.</p>
         </div>
-        {/* Streak badge */}
         <div className="glass rounded-xl px-5 py-3 flex items-center gap-3 border border-accent/20">
           <motion.div
-            animate={{ scale: [1, 1.2, 1] }}
+            animate={stats.streak > 0 ? { scale: [1, 1.2, 1] } : {}}
             transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
             className="text-2xl"
           >
             🔥
           </motion.div>
           <div>
-            <p className="text-xl font-heading font-bold text-accent">{streakDays}</p>
+            <p className="text-xl font-heading font-bold text-accent">{stats.streak}</p>
             <p className="text-[10px] text-muted-foreground">Day Streak</p>
           </div>
         </div>
@@ -177,59 +182,75 @@ const Progress = () => {
         {/* Quiz scores line chart */}
         <GlassCard hover={false} className="space-y-3">
           <h2 className="text-sm font-heading font-semibold">Quiz Scores Over Time</h2>
-          <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={quizScores}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(228 14% 18%)" />
-                <XAxis dataKey="date" tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
-                <YAxis domain={[50, 100]} tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
-                <RTooltip content={<CustomTooltip />} />
-                <Line
-                  type="monotone"
-                  dataKey="score"
-                  stroke="hsl(239 84% 67%)"
-                  strokeWidth={2}
-                  dot={{ r: 3, fill: "hsl(239 84% 67%)" }}
-                  activeDot={{ r: 5, stroke: "hsl(239 84% 67%)", strokeWidth: 2, fill: "hsl(228 14% 7%)" }}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-          </div>
+          {hasQuizData ? (
+            <div className="h-48">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={stats.quizScores}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="hsl(228 14% 18%)" />
+                  <XAxis dataKey="date" tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
+                  <YAxis domain={[0, 100]} tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
+                  <RTooltip content={<CustomTooltip />} />
+                  <Line
+                    type="monotone"
+                    dataKey="score"
+                    stroke="hsl(239 84% 67%)"
+                    strokeWidth={2}
+                    dot={{ r: 3, fill: "hsl(239 84% 67%)" }}
+                    activeDot={{ r: 5, stroke: "hsl(239 84% 67%)", strokeWidth: 2, fill: "hsl(228 14% 7%)" }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
+          ) : (
+            <EmptyState
+              icon={<HelpCircle className="h-8 w-8 text-primary/40" />}
+              title="No quiz data yet"
+              description="Complete your first quiz to see progress"
+            />
+          )}
         </GlassCard>
 
         {/* Subject donut chart */}
         <GlassCard hover={false} className="space-y-3">
           <h2 className="text-sm font-heading font-semibold">Study Time by Subject</h2>
-          <div className="h-48 flex items-center gap-4">
-            <div className="w-1/2 h-full">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={subjectBreakdown}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius="55%"
-                    outerRadius="85%"
-                    dataKey="value"
-                    stroke="none"
-                  >
-                    {subjectBreakdown.map((entry, i) => (
-                      <Cell key={i} fill={entry.color} />
-                    ))}
-                  </Pie>
-                </PieChart>
-              </ResponsiveContainer>
+          {hasSubjectData ? (
+            <div className="h-48 flex items-center gap-4">
+              <div className="w-1/2 h-full">
+                <ResponsiveContainer width="100%" height="100%">
+                  <PieChart>
+                    <Pie
+                      data={subjectBreakdown}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius="55%"
+                      outerRadius="85%"
+                      dataKey="value"
+                      stroke="none"
+                    >
+                      {subjectBreakdown.map((entry, i) => (
+                        <Cell key={i} fill={entry.color} />
+                      ))}
+                    </Pie>
+                  </PieChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="w-1/2 space-y-2">
+                {subjectBreakdown.map((s) => (
+                  <div key={s.name} className="flex items-center gap-2 text-xs">
+                    <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: s.color }} />
+                    <span className="text-foreground/80">{s.name}</span>
+                    <span className="ml-auto text-muted-foreground">{totalSubjectTime > 0 ? Math.round((s.value / totalSubjectTime) * 100) : 0}%</span>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div className="w-1/2 space-y-2">
-              {subjectBreakdown.map((s) => (
-                <div key={s.name} className="flex items-center gap-2 text-xs">
-                  <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: s.color }} />
-                  <span className="text-foreground/80">{s.name}</span>
-                  <span className="ml-auto text-muted-foreground">{s.value}%</span>
-                </div>
-              ))}
-            </div>
-          </div>
+          ) : (
+            <EmptyState
+              icon={<BookOpen className="h-8 w-8 text-primary/40" />}
+              title="No subjects yet"
+              description="Study a topic to see your subject breakdown"
+            />
+          )}
         </GlassCard>
       </motion.div>
 
@@ -237,37 +258,47 @@ const Progress = () => {
       <motion.div variants={item}>
         <GlassCard hover={false} className="space-y-3">
           <h2 className="text-sm font-heading font-semibold">Flashcard Mastery by Deck</h2>
-          <div className="h-48">
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={deckMastery} barSize={28}>
-                <CartesianGrid strokeDasharray="3 3" stroke="hsl(228 14% 18%)" />
-                <XAxis dataKey="deck" tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
-                <RTooltip
-                  content={({ active, payload, label }: any) => {
-                    if (!active || !payload?.length) return null;
-                    return (
-                      <div className="glass rounded-lg px-3 py-2 text-xs border border-border/40 shadow-xl space-y-1">
-                        <p className="font-medium text-foreground">{label}</p>
-                        <p className="text-emerald-400">Mastered: {payload[0]?.value}</p>
-                        <p className="text-muted-foreground">Learning: {payload[1]?.value}</p>
-                      </div>
-                    );
-                  }}
-                />
-                <Bar dataKey="mastered" stackId="a" fill="hsl(142, 71%, 45%)" radius={[0, 0, 0, 0]} />
-                <Bar dataKey="learning" stackId="a" fill="hsl(228 14% 22%)" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-          <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "hsl(142, 71%, 45%)" }} /> Mastered
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "hsl(228 14% 22%)" }} /> Still Learning
-            </span>
-          </div>
+          {hasDeckData ? (
+            <>
+              <div className="h-48">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={stats.deckMastery} barSize={28}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="hsl(228 14% 18%)" />
+                    <XAxis dataKey="deck" tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
+                    <YAxis tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
+                    <RTooltip
+                      content={({ active, payload, label }: any) => {
+                        if (!active || !payload?.length) return null;
+                        return (
+                          <div className="glass rounded-lg px-3 py-2 text-xs border border-border/40 shadow-xl space-y-1">
+                            <p className="font-medium text-foreground">{label}</p>
+                            <p className="text-emerald-400">Mastered: {payload[0]?.value}</p>
+                            <p className="text-muted-foreground">Learning: {payload[1]?.value}</p>
+                          </div>
+                        );
+                      }}
+                    />
+                    <Bar dataKey="mastered" stackId="a" fill="hsl(142, 71%, 45%)" radius={[0, 0, 0, 0]} />
+                    <Bar dataKey="learning" stackId="a" fill="hsl(228 14% 22%)" radius={[4, 4, 0, 0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+              <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "hsl(142, 71%, 45%)" }} /> Mastered
+                </span>
+                <span className="flex items-center gap-1.5">
+                  <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "hsl(228 14% 22%)" }} /> Still Learning
+                </span>
+              </div>
+            </>
+          ) : (
+            <EmptyState
+              icon={<Layers className="h-8 w-8 text-primary/40" />}
+              title="No flashcard data yet"
+              description="Complete a flashcard deck to see mastery stats"
+            />
+          )}
         </GlassCard>
       </motion.div>
     </motion.div>

@@ -53,13 +53,13 @@ const Study = () => {
   const [generated, setGenerated] = useState(false);
   const [detectedSubject, setDetectedSubject] = useState<string | null>(null);
 
-  // Fake subject detection
+  // Subject detection will be powered by AI when backend is connected
   useEffect(() => {
     if (content.length > 30) {
-      const timer = setTimeout(() => setDetectedSubject("Biology 🧬"), 600);
-      return () => clearTimeout(timer);
+      setDetectedSubject(null); // placeholder — no fake detection
+    } else {
+      setDetectedSubject(null);
     }
-    setDetectedSubject(null);
   }, [content]);
 
   // Loading message cycle
