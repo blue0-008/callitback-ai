@@ -1,78 +1,277 @@
 import { motion } from "framer-motion";
-import { BarChart3, Flame, Clock, Target, TrendingUp } from "lucide-react";
+import { BarChart3, Flame, Clock, Target, TrendingUp, BookOpen, Layers, HelpCircle } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
+import { cn } from "@/lib/utils";
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  Tooltip as RTooltip,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+  CartesianGrid,
+} from "recharts";
 
-const stats = [
-  { label: "Study Streak", value: "12 days", icon: Flame, color: "text-accent" },
-  { label: "Hours This Week", value: "8.5h", icon: Clock, color: "text-primary" },
-  { label: "Quizzes Passed", value: "23", icon: Target, color: "text-emerald-400" },
-  { label: "Cards Mastered", value: "142", icon: TrendingUp, color: "text-rose-400" },
+/* ── Data ──────────────────────────────────────── */
+
+const allTimeStats = [
+  { label: "Total Sessions", value: "84", icon: BookOpen, color: "text-primary" },
+  { label: "Cards Reviewed", value: "612", icon: Layers, color: "text-accent" },
+  { label: "Quizzes Taken", value: "38", icon: HelpCircle, color: "text-emerald-400" },
+  { label: "Best Streak", value: "21 days", icon: Flame, color: "text-accent" },
 ];
 
-const weeklyData = [
-  { day: "Mon", hours: 1.5 },
-  { day: "Tue", hours: 2.0 },
-  { day: "Wed", hours: 0.5 },
-  { day: "Thu", hours: 1.8 },
-  { day: "Fri", hours: 2.2 },
-  { day: "Sat", hours: 0.3 },
-  { day: "Sun", hours: 0.2 },
+// Heatmap data (7 weeks × 7 days)
+const heatmapWeeks = Array.from({ length: 7 }, (_, w) =>
+  Array.from({ length: 7 }, (_, d) => {
+    const rand = Math.random();
+    if (rand > 0.7) return Math.floor(Math.random() * 4) + 3;
+    if (rand > 0.35) return Math.floor(Math.random() * 3) + 1;
+    return 0;
+  })
+);
+
+const dayLabels = ["Mon", "", "Wed", "", "Fri", "", "Sun"];
+
+function heatColor(count: number) {
+  if (count === 0) return "bg-muted/40";
+  if (count <= 1) return "bg-primary/20";
+  if (count <= 3) return "bg-primary/45";
+  return "bg-primary/80";
+}
+
+// Quiz scores over time
+const quizScores = [
+  { date: "Feb 1", score: 65 },
+  { date: "Feb 5", score: 72 },
+  { date: "Feb 9", score: 68 },
+  { date: "Feb 14", score: 78 },
+  { date: "Feb 18", score: 82 },
+  { date: "Feb 22", score: 75 },
+  { date: "Feb 26", score: 88 },
+  { date: "Mar 1", score: 85 },
+  { date: "Mar 4", score: 91 },
+  { date: "Mar 7", score: 87 },
 ];
 
-const maxHours = Math.max(...weeklyData.map((d) => d.hours));
+// Subject breakdown
+const subjectBreakdown = [
+  { name: "Chemistry", value: 28, color: "hsl(25, 95%, 53%)" },
+  { name: "History", value: 22, color: "hsl(38, 92%, 50%)" },
+  { name: "Math", value: 20, color: "hsl(239, 84%, 67%)" },
+  { name: "Biology", value: 18, color: "hsl(142, 71%, 45%)" },
+  { name: "Physics", value: 12, color: "hsl(187, 85%, 53%)" },
+];
 
-const container = {
-  hidden: {},
-  show: { transition: { staggerChildren: 0.06 } },
-};
+// Flashcard mastery per deck
+const deckMastery = [
+  { deck: "Chemistry", mastered: 32, learning: 16 },
+  { deck: "History", mastered: 18, learning: 6 },
+  { deck: "Math", mastered: 5, learning: 11 },
+  { deck: "Biology", mastered: 22, learning: 8 },
+];
 
+/* ── Animation ─────────────────────────────────── */
+
+const container = { hidden: {}, show: { transition: { staggerChildren: 0.06 } } };
 const item = {
   hidden: { opacity: 0, y: 12 },
   show: { opacity: 1, y: 0, transition: { duration: 0.35 } },
 };
 
-const Progress = () => (
-  <motion.div variants={container} initial="hidden" animate="show" className="max-w-4xl mx-auto space-y-8">
-    <motion.div variants={item} className="space-y-1">
-      <h1 className="text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
-        <BarChart3 className="h-6 w-6 text-primary" /> Your Progress
-      </h1>
-      <p className="text-muted-foreground text-sm">Track your learning journey and stay consistent.</p>
-    </motion.div>
+/* ── Custom tooltip ────────────────────────────── */
 
-    {/* Stats Grid */}
-    <motion.div variants={item} className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-      {stats.map((s) => (
-        <GlassCard key={s.label} hover={false} className="text-center space-y-2">
-          <s.icon className={`h-5 w-5 mx-auto ${s.color}`} />
-          <p className="text-xl font-heading font-bold">{s.value}</p>
-          <p className="text-xs text-muted-foreground">{s.label}</p>
-        </GlassCard>
-      ))}
-    </motion.div>
+const CustomTooltip = ({ active, payload, label }: any) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="glass rounded-lg px-3 py-2 text-xs border border-border/40 shadow-xl">
+      <p className="text-muted-foreground">{label}</p>
+      <p className="font-semibold text-foreground">{payload[0].value}%</p>
+    </div>
+  );
+};
 
-    {/* Weekly Chart */}
-    <motion.div variants={item}>
-      <GlassCard hover={false} className="space-y-4">
-        <h2 className="text-sm font-heading font-semibold">This Week</h2>
-        <div className="flex items-end justify-between gap-2 h-32">
-          {weeklyData.map((d) => (
-            <div key={d.day} className="flex-1 flex flex-col items-center gap-1">
-              <div className="w-full flex items-end justify-center" style={{ height: "100px" }}>
-                <motion.div
-                  initial={{ height: 0 }}
-                  animate={{ height: `${(d.hours / maxHours) * 100}%` }}
-                  transition={{ duration: 0.6, ease: "easeOut" }}
-                  className="w-full max-w-[28px] rounded-t-md bg-primary/70"
-                />
-              </div>
-              <span className="text-[10px] text-muted-foreground">{d.day}</span>
-            </div>
-          ))}
+/* ── Component ─────────────────────────────────── */
+
+const Progress = () => {
+  const streakDays = 5;
+
+  return (
+    <motion.div variants={container} initial="hidden" animate="show" className="max-w-5xl mx-auto space-y-8">
+      {/* Header + streak */}
+      <motion.div variants={item} className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h1 className="text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
+            <BarChart3 className="h-6 w-6 text-primary" /> Your Progress
+          </h1>
+          <p className="text-muted-foreground text-sm">Track your learning journey and stay consistent.</p>
         </div>
-      </GlassCard>
+        {/* Streak badge */}
+        <div className="glass rounded-xl px-5 py-3 flex items-center gap-3 border border-accent/20">
+          <motion.div
+            animate={{ scale: [1, 1.2, 1] }}
+            transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+            className="text-2xl"
+          >
+            🔥
+          </motion.div>
+          <div>
+            <p className="text-xl font-heading font-bold text-accent">{streakDays}</p>
+            <p className="text-[10px] text-muted-foreground">Day Streak</p>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* All-time stats */}
+      <motion.div variants={item} className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        {allTimeStats.map((s) => (
+          <div key={s.label} className="glass rounded-xl p-4 text-center space-y-1.5">
+            <s.icon className={cn("h-5 w-5 mx-auto", s.color)} />
+            <p className="text-lg font-heading font-bold">{s.value}</p>
+            <p className="text-[10px] text-muted-foreground">{s.label}</p>
+          </div>
+        ))}
+      </motion.div>
+
+      {/* Heatmap */}
+      <motion.div variants={item}>
+        <GlassCard hover={false} className="space-y-3">
+          <h2 className="text-sm font-heading font-semibold">Weekly Activity</h2>
+          <div className="flex gap-4">
+            <div className="flex flex-col gap-[3px] text-[9px] text-muted-foreground/60 pt-0.5">
+              {dayLabels.map((l, i) => (
+                <div key={i} className="h-[14px] flex items-center">{l}</div>
+              ))}
+            </div>
+            <div className="flex gap-[3px]">
+              {heatmapWeeks.map((week, wi) => (
+                <div key={wi} className="flex flex-col gap-[3px]">
+                  {week.map((count, di) => (
+                    <div
+                      key={di}
+                      className={cn("w-[14px] h-[14px] rounded-sm transition-colors", heatColor(count))}
+                      title={`${count} sessions`}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="flex items-center gap-2 text-[9px] text-muted-foreground/50">
+            <span>Less</span>
+            {[0, 1, 2, 4].map((c) => (
+              <div key={c} className={cn("w-[10px] h-[10px] rounded-sm", heatColor(c))} />
+            ))}
+            <span>More</span>
+          </div>
+        </GlassCard>
+      </motion.div>
+
+      {/* Charts row */}
+      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Quiz scores line chart */}
+        <GlassCard hover={false} className="space-y-3">
+          <h2 className="text-sm font-heading font-semibold">Quiz Scores Over Time</h2>
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={quizScores}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(228 14% 18%)" />
+                <XAxis dataKey="date" tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
+                <YAxis domain={[50, 100]} tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
+                <RTooltip content={<CustomTooltip />} />
+                <Line
+                  type="monotone"
+                  dataKey="score"
+                  stroke="hsl(239 84% 67%)"
+                  strokeWidth={2}
+                  dot={{ r: 3, fill: "hsl(239 84% 67%)" }}
+                  activeDot={{ r: 5, stroke: "hsl(239 84% 67%)", strokeWidth: 2, fill: "hsl(228 14% 7%)" }}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        </GlassCard>
+
+        {/* Subject donut chart */}
+        <GlassCard hover={false} className="space-y-3">
+          <h2 className="text-sm font-heading font-semibold">Study Time by Subject</h2>
+          <div className="h-48 flex items-center gap-4">
+            <div className="w-1/2 h-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={subjectBreakdown}
+                    cx="50%"
+                    cy="50%"
+                    innerRadius="55%"
+                    outerRadius="85%"
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    {subjectBreakdown.map((entry, i) => (
+                      <Cell key={i} fill={entry.color} />
+                    ))}
+                  </Pie>
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+            <div className="w-1/2 space-y-2">
+              {subjectBreakdown.map((s) => (
+                <div key={s.name} className="flex items-center gap-2 text-xs">
+                  <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: s.color }} />
+                  <span className="text-foreground/80">{s.name}</span>
+                  <span className="ml-auto text-muted-foreground">{s.value}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </GlassCard>
+      </motion.div>
+
+      {/* Flashcard mastery stacked bar */}
+      <motion.div variants={item}>
+        <GlassCard hover={false} className="space-y-3">
+          <h2 className="text-sm font-heading font-semibold">Flashcard Mastery by Deck</h2>
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={deckMastery} barSize={28}>
+                <CartesianGrid strokeDasharray="3 3" stroke="hsl(228 14% 18%)" />
+                <XAxis dataKey="deck" tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
+                <YAxis tick={{ fontSize: 10, fill: "hsl(220 10% 54%)" }} axisLine={false} tickLine={false} />
+                <RTooltip
+                  content={({ active, payload, label }: any) => {
+                    if (!active || !payload?.length) return null;
+                    return (
+                      <div className="glass rounded-lg px-3 py-2 text-xs border border-border/40 shadow-xl space-y-1">
+                        <p className="font-medium text-foreground">{label}</p>
+                        <p className="text-emerald-400">Mastered: {payload[0]?.value}</p>
+                        <p className="text-muted-foreground">Learning: {payload[1]?.value}</p>
+                      </div>
+                    );
+                  }}
+                />
+                <Bar dataKey="mastered" stackId="a" fill="hsl(142, 71%, 45%)" radius={[0, 0, 0, 0]} />
+                <Bar dataKey="learning" stackId="a" fill="hsl(228 14% 22%)" radius={[4, 4, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+          <div className="flex items-center gap-4 text-[10px] text-muted-foreground">
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "hsl(142, 71%, 45%)" }} /> Mastered
+            </span>
+            <span className="flex items-center gap-1.5">
+              <span className="w-2.5 h-2.5 rounded-sm" style={{ background: "hsl(228 14% 22%)" }} /> Still Learning
+            </span>
+          </div>
+        </GlassCard>
+      </motion.div>
     </motion.div>
-  </motion.div>
-);
+  );
+};
 
 export default Progress;
