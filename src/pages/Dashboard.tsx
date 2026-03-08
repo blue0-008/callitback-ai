@@ -6,6 +6,7 @@ import EmptyState from "@/components/EmptyState";
 import { useNavigate } from "react-router-dom";
 import { useCountUp } from "@/hooks/useCountUp";
 import { getSessions, getStats, getContinueItem, type StudySession, type ContinueItem } from "@/lib/store";
+import { getUserName } from "@/lib/userPrefs";
 import { useState, useEffect } from "react";
 
 /* ── Animated stat card ────────────────────────── */
