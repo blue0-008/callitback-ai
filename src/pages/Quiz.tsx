@@ -4,32 +4,70 @@ import { HelpCircle, Clock, CheckCircle2, Timer, TimerOff } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
 import EmptyState from "@/components/EmptyState";
 import QuizPlayer, { type QuizQuestion } from "@/components/QuizPlayer";
-import { getQuizzes, type SavedQuiz } from "@/lib/store";
-import { useNavigate } from "react-router-dom";
+import { getQuizzes, saveQuizzes, type SavedQuiz } from "@/lib/store";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 const Quiz = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [quizzes, setQuizzes] = useState<SavedQuiz[]>([]);
   const [activeQuiz, setActiveQuiz] = useState<string | null>(null);
   const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
   const [timerEnabled, setTimerEnabled] = useState(true);
 
   useEffect(() => {
-    setQuizzes(getQuizzes());
-  }, []);
+    const loaded = getQuizzes();
+    setQuizzes(loaded);
 
-  if (activeQuiz) {
+    // Auto-open quiz from URL param (coming from /study)
+    const idParam = searchParams.get("id");
+    if (idParam) {
+      const found = loaded.find((q) => q.id === idParam);
+      if (found) {
+        const questions = loadQuizQuestions(idParam);
+        if (questions.length > 0) {
+          setQuizQuestions(questions);
+          setActiveQuiz(idParam);
+        }
+      }
+    }
+  }, [searchParams]);
+
+  function loadQuizQuestions(id: string): QuizQuestion[] {
+    try {
+      const raw = localStorage.getItem(`studysprint_quiz_data_${id}`);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  }
+
+  const openQuiz = (id: string) => {
+    const questions = loadQuizQuestions(id);
+    setQuizQuestions(questions);
+    setActiveQuiz(id);
+  };
+
+  if (activeQuiz && quizQuestions.length > 0) {
     const quiz = quizzes.find((q) => q.id === activeQuiz);
     return (
       <QuizPlayer
         title={quiz?.title ?? "Quiz"}
         questions={quizQuestions}
         timerEnabled={timerEnabled}
-        onExit={() => { setActiveQuiz(null); setQuizzes(getQuizzes()); }}
+        onExit={() => {
+          // Mark as completed
+          const updated = getQuizzes().map((q) =>
+            q.id === activeQuiz ? { ...q, completed: true } : q
+          );
+          saveQuizzes(updated);
+          setQuizzes(updated);
+          setActiveQuiz(null);
+          navigate("/quiz", { replace: true });
+        }}
         onRetryWrong={(wrong) => {
           setQuizQuestions(wrong);
-          setActiveQuiz(activeQuiz);
         }}
       />
     );
@@ -99,11 +137,7 @@ const Quiz = () => {
           <GlassCard
             key={q.id}
             className="flex items-center justify-between"
-            onClick={() => {
-              // Quiz question data would be loaded from localStorage
-              setQuizQuestions([]);
-              setActiveQuiz(q.id);
-            }}
+            onClick={() => openQuiz(q.id)}
           >
             <div className="space-y-1">
               <p className="text-sm font-medium flex items-center gap-2">
