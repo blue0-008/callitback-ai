@@ -1,6 +1,7 @@
 import { LayoutDashboard, BookOpen, HelpCircle, Layers, BarChart3, Zap } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
+import { totalDueToday } from "@/pages/Flashcards";
 import {
   Sidebar,
   SidebarContent,
@@ -13,11 +14,11 @@ import {
 } from "@/components/ui/sidebar";
 
 const navItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard },
-  { title: "Study", url: "/study", icon: BookOpen },
-  { title: "Quiz", url: "/quiz", icon: HelpCircle },
-  { title: "Flashcards", url: "/flashcards", icon: Layers },
-  { title: "Progress", url: "/progress", icon: BarChart3 },
+  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, badge: 0 },
+  { title: "Study", url: "/study", icon: BookOpen, badge: 0 },
+  { title: "Quiz", url: "/quiz", icon: HelpCircle, badge: 0 },
+  { title: "Flashcards", url: "/flashcards", icon: Layers, badge: totalDueToday },
+  { title: "Progress", url: "/progress", icon: BarChart3, badge: 0 },
 ];
 
 export function AppSidebar() {
@@ -58,7 +59,14 @@ export function AppSidebar() {
                         }`}
                         activeClassName=""
                       >
-                        <item.icon className={`h-4 w-4 shrink-0 transition-colors ${active ? "text-primary" : ""}`} />
+                        <span className="relative shrink-0">
+                          <item.icon className={`h-4 w-4 transition-colors ${active ? "text-primary" : ""}`} />
+                          {item.badge > 0 && (
+                            <span className="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] flex items-center justify-center rounded-full bg-accent text-accent-foreground text-[9px] font-bold px-0.5">
+                              {item.badge}
+                            </span>
+                          )}
+                        </span>
                         {!collapsed && <span>{item.title}</span>}
                       </NavLink>
                     </SidebarMenuButton>
