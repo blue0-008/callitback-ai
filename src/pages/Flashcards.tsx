@@ -5,30 +5,61 @@ import GlassCard from "@/components/GlassCard";
 import SubjectBadge from "@/components/SubjectBadge";
 import EmptyState from "@/components/EmptyState";
 import FlashcardPlayer, { type Flashcard } from "@/components/FlashcardPlayer";
-import { getDecks, type SavedDeck } from "@/lib/store";
-import { useNavigate } from "react-router-dom";
+import { getDecks, saveDecks, type SavedDeck } from "@/lib/store";
+import { useNavigate, useSearchParams } from "react-router-dom";
+
+function loadDeckCards(id: string): Flashcard[] {
+  try {
+    const raw = localStorage.getItem(`studysprint_deck_data_${id}`);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
 
 const Flashcards = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [decks, setDecks] = useState<SavedDeck[]>([]);
   const [activeDeck, setActiveDeck] = useState<string | null>(null);
+  const [activeCards, setActiveCards] = useState<Flashcard[]>([]);
 
   useEffect(() => {
-    setDecks(getDecks());
-  }, []);
+    const loaded = getDecks();
+    setDecks(loaded);
 
-  // For now, no deck data means empty state. When decks are generated
-  // from /study, they'll be stored in localStorage and appear here.
+    // Auto-open deck from URL param (coming from /study)
+    const idParam = searchParams.get("id");
+    if (idParam) {
+      const found = loaded.find((d) => d.id === idParam);
+      if (found) {
+        const cards = loadDeckCards(idParam);
+        if (cards.length > 0) {
+          setActiveCards(cards);
+          setActiveDeck(idParam);
+        }
+      }
+    }
+  }, [searchParams]);
+
+  const openDeck = (id: string) => {
+    const cards = loadDeckCards(id);
+    setActiveCards(cards);
+    setActiveDeck(id);
+  };
 
   if (activeDeck) {
     const deck = decks.find((d) => d.id === activeDeck);
-    // Deck card data would be loaded from localStorage by key
-    // For now show empty player exit
     return (
       <FlashcardPlayer
         deckTitle={deck?.title ?? "Flashcards"}
-        cards={[]}
-        onExit={() => { setActiveDeck(null); setDecks(getDecks()); }}
+        cards={activeCards}
+        onExit={() => {
+          const reloaded = getDecks();
+          setDecks(reloaded);
+          setActiveDeck(null);
+          navigate("/flashcards", { replace: true });
+        }}
       />
     );
   }
@@ -80,7 +111,7 @@ const Flashcards = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {decks.map((d) => (
-          <GlassCard key={d.id} className="space-y-3" onClick={() => setActiveDeck(d.id)}>
+          <GlassCard key={d.id} className="space-y-3" onClick={() => openDeck(d.id)}>
             <div className="flex items-center justify-between">
               <p className="text-sm font-medium">{d.title}</p>
               <SubjectBadge subject={d.subject} />
