@@ -149,12 +149,24 @@ const QuizPlayer = ({
     if (phase !== "revealed") return;
     if (isLast) {
       setShowResult(true);
+      // Confetti on completion if score > 80%
+      const finalCorrect = [...answers, selected].filter((a, i) => a === questions[i]?.correctIndex).length;
+      const finalPct = Math.round((finalCorrect / total) * 100);
+      if (finalPct > 80 && confettiRef.current) {
+        setTimeout(() => {
+          if (confettiRef.current) {
+            for (let burst = 0; burst < 3; burst++) {
+              setTimeout(() => confettiRef.current && spawnConfetti(confettiRef.current), burst * 200);
+            }
+          }
+        }, 400);
+      }
     } else {
       setCurrent((c) => c + 1);
       setSelected(null);
       setPhase("answering");
     }
-  }, [phase, isLast]);
+  }, [phase, isLast, answers, selected, questions, total]);
 
   // Keyboard shortcuts
   useEffect(() => {
