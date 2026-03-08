@@ -41,25 +41,6 @@ const loadingMessages = [
   "Building your study set...",
 ];
 
-const sampleOutput = `## Key Concepts: Cell Biology
-
-### 1. Cell Structure
-The cell is the basic structural and functional unit of all living organisms. Cells are classified into two main types:
-- **Prokaryotic cells** — lack a membrane-bound nucleus (e.g., bacteria)
-- **Eukaryotic cells** — contain a membrane-bound nucleus (e.g., plant & animal cells)
-
-### 2. Organelles
-| Organelle | Function |
-|-----------|----------|
-| Nucleus | Contains DNA, controls cell activities |
-| Mitochondria | Produces ATP (cellular energy) |
-| Ribosome | Protein synthesis |
-| ER | Transport and processing |
-
-### 3. Cell Division
-Cells reproduce through **mitosis** (growth/repair) and **meiosis** (gamete production). The cell cycle includes interphase, mitosis, and cytokinesis.
-
-> 💡 *Key insight*: All cells arise from pre-existing cells — this is a fundamental principle of cell theory.`;
 
 const Study = () => {
   const [source, setSource] = useState<SourceType>("text");
