@@ -334,31 +334,9 @@ const Study = () => {
                     initial={{ opacity: 0, y: 12 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ duration: 0.5 }}
-                    className="prose-sm text-sm leading-relaxed text-foreground/90 space-y-3"
+                    className="h-full"
                   >
-                    {sampleOutput.split("\n").map((line, i) => {
-                      if (line.startsWith("## "))
-                        return <h2 key={i} className="text-base font-heading font-bold text-foreground mt-0">{line.replace("## ", "")}</h2>;
-                      if (line.startsWith("### "))
-                        return <h3 key={i} className="text-sm font-heading font-semibold text-foreground mt-3">{line.replace("### ", "")}</h3>;
-                      if (line.startsWith("> "))
-                        return <blockquote key={i} className="border-l-2 border-primary/40 pl-3 text-xs text-muted-foreground italic mt-2">{line.replace("> ", "")}</blockquote>;
-                      if (line.startsWith("| ") && line.includes("---")) return null;
-                      if (line.startsWith("| ")) {
-                        const cells = line.split("|").filter(Boolean).map((c) => c.trim());
-                        return (
-                          <div key={i} className="grid grid-cols-2 gap-2 text-xs py-1 border-b border-border/20">
-                            {cells.map((c, j) => (
-                              <span key={j} className={j === 0 ? "font-medium" : "text-muted-foreground"}>{c}</span>
-                            ))}
-                          </div>
-                        );
-                      }
-                      if (line.startsWith("- **"))
-                        return <p key={i} className="text-xs text-foreground/80 ml-2">• {line.replace("- ", "").replace(/\*\*/g, "")}</p>;
-                      if (line.trim() === "") return <div key={i} className="h-1" />;
-                      return <p key={i} className="text-xs text-foreground/80">{line}</p>;
-                    })}
+                    <SummaryOutput onStartQuiz={() => {}} />
                   </motion.div>
                 ) : (
                   <motion.div
