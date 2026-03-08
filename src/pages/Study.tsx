@@ -15,6 +15,7 @@ import {
   Dna,
 } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
+import SummaryOutput from "@/components/SummaryOutput";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
