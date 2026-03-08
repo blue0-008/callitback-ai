@@ -18,6 +18,7 @@ import GlassCard from "@/components/GlassCard";
 import SummaryOutput from "@/components/SummaryOutput";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { getUserSubjects } from "@/lib/userPrefs";
 
 type SourceType = "text" | "pdf" | "youtube";
 type OutputMode = "summary" | "quiz" | "flashcards";
