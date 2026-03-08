@@ -17,37 +17,40 @@ import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
-const App = () => {
+const AppRoutes = () => {
   const [showOnboarding, setShowOnboarding] = useState(!hasCompletedOnboarding());
 
+  if (showOnboarding) {
+    return <OnboardingFlow onComplete={() => setShowOnboarding(false)} />;
+  }
+
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <FocusProvider>
-          <Toaster />
-          <Sonner />
-          {showOnboarding && (
-            <OnboardingFlow onComplete={() => setShowOnboarding(false)} />
-          )}
-          {!showOnboarding && (
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<Navigate to="/dashboard" replace />} />
-                <Route element={<AppLayout />}>
-                  <Route path="/dashboard" element={<Dashboard />} />
-                  <Route path="/study" element={<Study />} />
-                  <Route path="/quiz" element={<Quiz />} />
-                  <Route path="/flashcards" element={<Flashcards />} />
-                  <Route path="/progress" element={<Progress />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </BrowserRouter>
-          )}
-        </FocusProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
+    <Routes>
+      <Route path="/" element={<Navigate to="/dashboard" replace />} />
+      <Route element={<AppLayout />}>
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/study" element={<Study />} />
+        <Route path="/quiz" element={<Quiz />} />
+        <Route path="/flashcards" element={<Flashcards />} />
+        <Route path="/progress" element={<Progress />} />
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
+
+const App = () => (
+  <QueryClientProvider client={queryClient}>
+    <TooltipProvider>
+      <FocusProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AppRoutes />
+        </BrowserRouter>
+      </FocusProvider>
+    </TooltipProvider>
+  </QueryClientProvider>
+);
 
 export default App;
