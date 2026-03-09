@@ -53,7 +53,13 @@ const AppLayout = () => {
               >
               {focusMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
-              <ProfileDropdown />
+              <button
+                onClick={() => setDrawerOpen(true)}
+                className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary hover:bg-primary/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Open profile"
+              >
+                {initial}
+              </button>
             </div>
           </header>
           <main className={cn("flex-1 p-4 sm:p-6 overflow-auto", isMobile && "pb-20")}>
@@ -66,6 +72,9 @@ const AppLayout = () => {
 
         {/* Pomodoro */}
         <PomodoroTimer />
+
+        {/* Profile Drawer */}
+        <ProfileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
       </div>
     </SidebarProvider>
   );
