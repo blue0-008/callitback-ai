@@ -424,7 +424,7 @@ const Study = () => {
                   className={cn(
                     "w-full relative overflow-hidden rounded-lg px-6 py-5 text-sm font-semibold transition-all duration-300",
                     "bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground",
-                    "hover:shadow-[0_0_30px_hsl(239_84%_67%/0.4)] hover:scale-[1.01]",
+                    "hover:shadow-[0_0_30px_hsl(38_92%_50%/0.4)] hover:scale-[1.01]",
                     "disabled:opacity-50 disabled:hover:shadow-none disabled:hover:scale-100 disabled:cursor-not-allowed",
                     "flex items-center justify-center gap-2",
                     generating && "animate-pulse"
