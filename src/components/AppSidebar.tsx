@@ -1,4 +1,4 @@
-import { LayoutDashboard, BookOpen, HelpCircle, Layers, BarChart3, Zap, FileText } from "lucide-react";
+import { LayoutDashboard, BookOpen, HelpCircle, Layers, Zap, Library } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { getDueToday } from "@/lib/store";
