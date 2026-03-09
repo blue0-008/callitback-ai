@@ -24,12 +24,12 @@
     "days": "días",
     "continueStudying": "Continuar estudiando",
     "nothingYet": "Nada todavía",
-    "startFirstSprint": "¡Empieza tu primer sprint! ⚡",
+    "startFirstSprint": "¡Empieza tu primera sesión! ⚡",
     "goToStudy": "Ir a Estudiar",
     "continue": "Continuar",
     "weakSpots": "Puntos débiles 🎯",
     "noWeakSpots": "Sin puntos débiles. ¡Sigue así! 💪",
-    "startNewSprint": "Nuevo Sprint ⚡"
+    "startNewSprint": "Nueva Sesión ⚡"
   },
   "study": {
     "title": "Generador de estudio IA",
