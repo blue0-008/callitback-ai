@@ -46,7 +46,7 @@ export function AppSidebar() {
     <Sidebar side={isRtl ? "right" : "left"} collapsible="icon" className="border-r-0 rtl:border-r-0 rtl:border-l-0">
       <SidebarContent className="pt-4 flex flex-col h-full">
         {/* Logo */}
-        <div className="flex items-center gap-2 px-4 mb-6">
+        <div className="flex items-center gap-2 px-4 mb-6 rtl:flex-row-reverse rtl:justify-end">
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/20">
             <Zap className="w-4 h-4 text-primary" />
           </div>
