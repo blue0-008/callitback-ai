@@ -10,7 +10,7 @@ import AppLayout from "./components/AppLayout";
 import OnboardingFlow from "./components/OnboardingFlow";
 import Dashboard from "./pages/Dashboard";
 import Study from "./pages/Study";
-import Summaries from "./pages/Summaries";
+import Library from "./pages/Library";
 import Quiz from "./pages/Quiz";
 import Flashcards from "./pages/Flashcards";
 import Progress from "./pages/Progress";
