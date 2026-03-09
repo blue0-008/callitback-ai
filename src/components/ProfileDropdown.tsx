@@ -56,7 +56,7 @@ const ProfileDropdown = () => {
   };
 
   const handleResetOnboarding = () => {
-    localStorage.removeItem("hasCompletedOnboarding");
+    localStorage.removeItem("callitback_onboarding");
     window.location.reload();
   };
 

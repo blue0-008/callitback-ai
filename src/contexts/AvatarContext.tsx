@@ -1,9 +1,9 @@
 import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import i18n from "@/lib/i18n";
 
-const AVATAR_KEY = "studysprint_avatar";
-const NAME_KEY = "studysprint_userName";
-const LANG_KEY = "studysprint_language";
+const AVATAR_KEY = "callitback_avatar";
+const NAME_KEY = "callitback_userName";
+const LANG_KEY = "callitback_language";
 
 export type AppLanguage = "en" | "ar" | "fr" | "es";
 

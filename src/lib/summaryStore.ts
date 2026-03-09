@@ -8,7 +8,7 @@ export interface SavedSummary {
   estimatedReadTime: number;
 }
 
-const STORAGE_KEY = "studysprint_summaries";
+const STORAGE_KEY = "callitback_summaries";
 
 export const saveSummary = (summary: SavedSummary): void => {
   const summaries = getSummaries();

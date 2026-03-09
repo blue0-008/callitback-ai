@@ -48,11 +48,11 @@ export interface UserStats {
 }
 
 const KEYS = {
-  sessions: "studysprint_sessions",
-  quizzes: "studysprint_quizzes",
-  decks: "studysprint_decks",
-  stats: "studysprint_stats",
-  continueItem: "studysprint_continue",
+  sessions: "callitback_sessions",
+  quizzes: "callitback_quizzes",
+  decks: "callitback_decks",
+  stats: "callitback_stats",
+  continueItem: "callitback_continue",
 } as const;
 
 function read<T>(key: string, fallback: T): T {

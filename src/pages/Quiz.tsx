@@ -36,7 +36,7 @@ const Quiz = () => {
 
   function loadQuizQuestions(id: string): QuizQuestion[] {
     try {
-      const raw = localStorage.getItem(`studysprint_quiz_data_${id}`);
+      const raw = localStorage.getItem(`callitback_quiz_data_${id}`);
       return raw ? JSON.parse(raw) : [];
     } catch {
       return [];

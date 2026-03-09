@@ -319,7 +319,7 @@ const Study = () => {
             definition: c.back,
             isRtl: activeLang === "ar",
           }));
-          localStorage.setItem(`studysprint_deck_data_${deckId}`, JSON.stringify(cards));
+          localStorage.setItem(`callitback_deck_data_${deckId}`, JSON.stringify(cards));
           const decks = getDecks();
           const deckTitle = subject ? `${subject.subject} Flashcards` : "Study Flashcards";
           decks.unshift({ id: deckId, title: deckTitle, subject: subject?.subject ?? "General", cards: cards.length, mastered: 0, dueToday: cards.length, createdAt: new Date().toISOString() });

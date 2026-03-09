@@ -351,7 +351,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 className="space-y-3"
               >
                 <h1 className="text-3xl sm:text-4xl font-heading font-bold tracking-tight">
-                  {t("onboarding.welcomeTitle", "Welcome to")} <span className="text-primary glow-text">StudySprint AI</span>
+                  {t("onboarding.welcomeTitle", "Welcome to")} <span className="text-primary glow-text">CallItBack</span>
                 </h1>
                 <p className="text-muted-foreground text-sm max-w-sm mx-auto">
                   {t("onboarding.welcomeDesc", "The smartest way to study anything. Let's get you set up in 30 seconds.")}

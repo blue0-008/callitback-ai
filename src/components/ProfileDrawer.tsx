@@ -104,7 +104,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   const toggleTheme = () => {
     const next = !dark;
     document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("studysprint_theme", next ? "dark" : "light");
+    localStorage.setItem("callitback_theme", next ? "dark" : "light");
     setDark(next);
   };
 

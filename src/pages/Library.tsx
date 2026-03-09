@@ -185,7 +185,7 @@ const Library = () => {
     const next = decks.filter((d) => d.id !== item.id);
     setDecks(next);
     localStorage.setItem(STORAGE_KEYS.decks, JSON.stringify(next));
-    localStorage.removeItem(`studysprint_deck_data_${item.id}`);
+    localStorage.removeItem(`callitback_deck_data_${item.id}`);
   };
 
   return (
