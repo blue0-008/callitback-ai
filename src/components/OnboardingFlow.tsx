@@ -5,9 +5,9 @@ import { ChevronLeft, Check, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   completeOnboarding,
+  setPreferredMethods,
   setUserName,
   setUserSubjects,
-  setStudyStyle,
 } from "@/lib/userPrefs";
 
 /* ── Confetti (reuse pattern from QuizPlayer) ──── */
@@ -31,9 +31,16 @@ function spawnConfetti(container: HTMLDivElement) {
     el.animate(
       [
         { transform: "translate(-50%,-50%) scale(1)", opacity: 1 },
-        { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0)`, opacity: 0 },
+        {
+          transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0)`,
+          opacity: 0,
+        },
       ],
-      { duration: 900 + Math.random() * 400, easing: "cubic-bezier(.2,.8,.3,1)", fill: "forwards" }
+      {
+        duration: 900 + Math.random() * 400,
+        easing: "cubic-bezier(.2,.8,.3,1)",
+        fill: "forwards",
+      }
     );
     setTimeout(() => el.remove(), 1400);
   }
@@ -59,10 +66,25 @@ const ALL_SUBJECTS = [
 ];
 
 const STUDY_STYLES = [
-  { key: "quizzes", emoji: "🧠", label: "Quizzes", desc: "Test yourself until it sticks" },
-  { key: "flashcards", emoji: "🃏", label: "Flashcards", desc: "Flip through key concepts" },
-  { key: "summaries", emoji: "📋", label: "Summaries", desc: "Read the key points fast" },
-];
+  {
+    key: "quiz",
+    emoji: "🧠",
+    label: "Quizzes",
+    desc: "Test yourself until it sticks",
+  },
+  {
+    key: "flashcards",
+    emoji: "🃏",
+    label: "Flashcards",
+    desc: "Flip through key concepts",
+  },
+  {
+    key: "summaries",
+    emoji: "📋",
+    label: "Summaries",
+    desc: "Read the key points fast",
+  },
+] as const;
 
 const TIPS = [
   "💡 Tip: Paste any text to instantly generate a quiz",
@@ -117,7 +139,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const [direction, setDirection] = useState(1);
   const [name, setName] = useState("");
   const [subjects, setSubjects] = useState<Set<string>>(new Set());
-  const [style, setStyle] = useState("");
+  const [preferredMethods, setPreferredMethodsState] = useState<Set<string>>(new Set());
   const confettiRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -141,11 +163,11 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const finish = useCallback(() => {
     setUserName(name.trim() || "");
     setUserSubjects(Array.from(subjects));
-    setStudyStyle(style);
+    setPreferredMethods(Array.from(preferredMethods));
     completeOnboarding();
     onComplete();
     navigate("/study");
-  }, [name, subjects, style, onComplete, navigate]);
+  }, [name, subjects, preferredMethods, onComplete, navigate]);
 
   const toggleSubject = useCallback((subj: string) => {
     setSubjects((prev) => {
@@ -156,17 +178,14 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     });
   }, []);
 
-  // Auto-select study style with delay
-  const selectStyle = useCallback(
-    (s: string) => {
-      setStyle(s);
-      setTimeout(() => {
-        setDirection(1);
-        setStep(4);
-      }, 400);
-    },
-    []
-  );
+  const togglePreferredMethod = useCallback((method: string) => {
+    setPreferredMethodsState((prev) => {
+      const next = new Set(prev);
+      if (next.has(method)) next.delete(method);
+      else next.add(method);
+      return next;
+    });
+  }, []);
 
   // Focus input on step 1
   useEffect(() => {
@@ -181,7 +200,10 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       setTimeout(() => {
         if (confettiRef.current) {
           for (let burst = 0; burst < 3; burst++) {
-            setTimeout(() => confettiRef.current && spawnConfetti(confettiRef.current), burst * 200);
+            setTimeout(
+              () => confettiRef.current && spawnConfetti(confettiRef.current),
+              burst * 200
+            );
           }
         }
       }, 300);
@@ -404,23 +426,31 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
             >
               <div className="space-y-2">
                 <h2 className="text-xl font-heading font-bold">What's your go-to study style?</h2>
-                <p className="text-xs text-muted-foreground">Pick one — you can always change later</p>
+                <p className="text-xs text-muted-foreground">
+                  Pick as many as you like — you can always change this later
+                </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-lg">
                 {STUDY_STYLES.map((s) => {
-                  const selected = style === s.key;
+                  const selected = preferredMethods.has(s.key);
                   return (
                     <button
                       key={s.key}
-                      onClick={() => selectStyle(s.key)}
+                      onClick={() => togglePreferredMethod(s.key)}
                       className={cn(
-                        "glass rounded-xl p-5 text-center border transition-all duration-200 space-y-2",
+                        "glass rounded-xl p-5 text-center border transition-all duration-200 space-y-2 relative",
                         selected
-                          ? "border-primary/60 bg-primary/10 shadow-[0_0_20px_hsl(239_84%_67%/0.2)] scale-[1.03]"
+                          ? "border-primary/60 bg-primary/10 shadow-[0_0_20px_hsl(239_84%_67%/0.2)]"
                           : "border-border/30 hover:border-border/60 hover:bg-secondary/30"
                       )}
+                      aria-pressed={selected}
                     >
+                      {selected && (
+                        <span className="absolute top-3 right-3 h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                          <Check className="h-4 w-4" />
+                        </span>
+                      )}
                       <span className="text-2xl">{s.emoji}</span>
                       <p className="text-sm font-semibold">{s.label}</p>
                       <p className="text-[10px] text-muted-foreground">{s.desc}</p>
@@ -428,6 +458,21 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                   );
                 })}
               </div>
+
+              <AnimatePresence>
+                {preferredMethods.size > 0 && (
+                  <motion.button
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    onClick={next}
+                    className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(239_84%_67%/0.3)] hover:scale-[1.01]"
+                  >
+                    Continue →
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
 
