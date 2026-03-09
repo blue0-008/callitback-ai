@@ -46,7 +46,8 @@ function getTodaySessions(): number {
 
 function formatJoinDate(iso: string) {
   const d = new Date(iso + "T00:00:00");
-  return d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+  const locale = typeof document !== "undefined" && document.documentElement.dir === "rtl" ? "ar-u-nu-latn" : undefined;
+  return d.toLocaleDateString(locale, { month: "long", year: "numeric" });
 }
 
 const LANGUAGES: { code: AppLanguage; label: string; flag: string }[] = [

@@ -47,7 +47,8 @@ function readStorage<T>(key: string, fallback: T): T {
 }
 
 function formatDate(value: number) {
-  return new Date(value).toLocaleDateString(undefined, {
+  const locale = typeof document !== "undefined" && document.documentElement.dir === "rtl" ? "ar-u-nu-latn" : undefined;
+  return new Date(value).toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",
