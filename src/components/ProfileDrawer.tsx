@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Pencil, Check, Trash2, RotateCcw, Download, Sun, Moon, Camera } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
-import { useAvatar } from "@/contexts/AvatarContext";
+import { useUser } from "@/contexts/AvatarContext";
 import AvatarPickerModal from "@/components/AvatarPickerModal";
 import { toast } from "@/hooks/use-toast";
-import { getUserName, setUserName } from "@/lib/userPrefs";
+import { getStats } from "@/lib/store";
 import { getStats } from "@/lib/store";
 import { Progress } from "@/components/ui/progress";
 import {
