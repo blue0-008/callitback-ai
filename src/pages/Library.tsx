@@ -250,7 +250,7 @@ const Library = () => {
                         openItem(item);
                       }}
                     >
-                      <Eye className="h-4 w-4 mr-2" /> Open
+                      <Eye className="h-4 w-4 ltr:mr-2 rtl:ml-2" /> Open
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={(e) => {
@@ -259,7 +259,7 @@ const Library = () => {
                       }}
                       className="text-destructive focus:text-destructive"
                     >
-                      <Trash2 className="h-4 w-4 mr-2" /> Delete
+                      <Trash2 className="h-4 w-4 ltr:mr-2 rtl:ml-2" /> Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
