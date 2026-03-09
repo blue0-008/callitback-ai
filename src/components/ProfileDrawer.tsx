@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Pencil, Check, Trash2, RotateCcw, Download, Sun, Moon, Camera } from "lucide-react";
-import UserAvatar, { setAvatarUrl } from "@/components/UserAvatar";
+import UserAvatar from "@/components/UserAvatar";
+import { useAvatar } from "@/contexts/AvatarContext";
 import AvatarPickerModal from "@/components/AvatarPickerModal";
 import { toast } from "@/hooks/use-toast";
 import { getUserName, setUserName } from "@/lib/userPrefs";
