@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { User, Pencil, Palette, Trash2, RotateCcw } from "lucide-react";
-import { getUserName, setUserName } from "@/lib/userPrefs";
+import { useUser } from "@/contexts/AvatarContext";
 import {
   DropdownMenu,
   DropdownMenuContent,

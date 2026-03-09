@@ -88,8 +88,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
 
   const saveName = () => {
     const trimmed = editValue.trim() || "User";
-    setUserName(trimmed);
-    setName(trimmed);
+    setUsername(trimmed);
     setEditing(false);
   };
 

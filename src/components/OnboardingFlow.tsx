@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 import {
   completeOnboarding,
   setPreferredMethods,
-  setUserName,
 } from "@/lib/userPrefs";
+import { useUser } from "@/contexts/AvatarContext";
 
 /* ── Confetti (reuse pattern from QuizPlayer) ──── */
 
