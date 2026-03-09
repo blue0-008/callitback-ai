@@ -24,12 +24,12 @@
     "days": "days",
     "continueStudying": "Continue Studying",
     "nothingYet": "Nothing yet",
-    "startFirstSprint": "Start your first sprint! ⚡",
+    "startFirstSprint": "Start your first session! ⚡",
     "goToStudy": "Go to Study",
     "continue": "Continue",
     "weakSpots": "Weak Spots 🎯",
     "noWeakSpots": "No weak spots yet. Keep it up! 💪",
-    "startNewSprint": "Start a New Sprint ⚡"
+    "startNewSprint": "Start a New Session ⚡"
   },
   "study": {
     "title": "AI Study Generator",
