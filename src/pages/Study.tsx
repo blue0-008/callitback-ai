@@ -121,7 +121,11 @@ const Study = () => {
 
   const [source, setSource] = useState<SourceType>("text");
   const [content, setContent] = useState("");
-  const [selectedModes, setSelectedModes] = useState<Set<OutputMode>>(new Set(["summary"]));
+  const [selectedModes, setSelectedModes] = useState<Set<OutputMode>>(() => {
+    const saved = getPreferredMethods();
+    const valid = saved.filter((m): m is OutputMode => ["summary", "quiz", "flashcards"].includes(m));
+    return valid.length > 0 ? new Set(valid) : new Set<OutputMode>(["summary"]);
+  });
   const [difficulty, setDifficulty] = useState<Difficulty>("Intermediate");
   const [diffOpen, setDiffOpen] = useState(false);
   const [generating, setGenerating] = useState(false);
