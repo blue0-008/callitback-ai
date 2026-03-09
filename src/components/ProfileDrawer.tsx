@@ -248,7 +248,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
               onClick={toggleTheme}
               className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground hover:bg-secondary/60 transition-colors"
             >
-              {dark ? <Moon className="h-4 w-4 text-muted-foreground" /> : <Sun className="h-4 w-4 text-muted-foreground" />}
+              {dark ? <Sun className="h-4 w-4 text-muted-foreground" /> : <Moon className="h-4 w-4 text-muted-foreground" />}
               <span>{dark ? "Switch to Light Mode" : "Switch to Dark Mode"}</span>
             </button>
 
