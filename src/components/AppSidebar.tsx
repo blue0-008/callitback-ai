@@ -43,7 +43,7 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0 rtl:border-r-0 rtl:border-l-0">
+    <Sidebar side={isRtl ? "right" : "left"} collapsible="icon" className="border-r-0 rtl:border-r-0 rtl:border-l-0">
       <SidebarContent className="pt-4 flex flex-col h-full">
         {/* Logo */}
         <div className="flex items-center gap-2 px-4 mb-6">
