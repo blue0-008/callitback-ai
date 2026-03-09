@@ -273,10 +273,10 @@ const QuizPlayer = ({
 
       {/* Timer bar */}
       {timerEnabled && phase === "answering" && (
-        <div className="w-full h-1 rounded-full bg-muted overflow-hidden">
+        <div className="relative w-full h-1 rounded-full bg-muted overflow-hidden">
           <motion.div
             className={cn(
-              "h-full rounded-full transition-colors",
+              "absolute inset-y-0 ltr:left-0 rtl:right-0 rounded-full transition-colors",
               timeLeft > 10 ? "bg-accent" : "bg-red-500"
             )}
             initial={{ width: "100%" }}
