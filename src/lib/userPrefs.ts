@@ -7,6 +7,7 @@ const KEYS = {
   name: "studysprint_userName",
   subjects: "studysprint_subjects",
   studyStyle: "studysprint_studyStyle",
+  preferredMethods: "studysprint_preferred_methods",
 } as const;
 
 function read<T>(key: string, fallback: T): T {
@@ -48,4 +49,12 @@ export function getStudyStyle(): string {
 
 export function setStudyStyle(style: string) {
   localStorage.setItem(KEYS.studyStyle, style);
+}
+
+export function getPreferredMethods(): string[] {
+  return read<string[]>(KEYS.preferredMethods, []);
+}
+
+export function setPreferredMethods(methods: string[]) {
+  localStorage.setItem(KEYS.preferredMethods, JSON.stringify(methods));
 }

@@ -5,9 +5,9 @@ import { ChevronLeft, Check, Zap } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   completeOnboarding,
+  setPreferredMethods,
   setUserName,
   setUserSubjects,
-  setStudyStyle,
 } from "@/lib/userPrefs";
 
 /* ── Confetti (reuse pattern from QuizPlayer) ──── */
@@ -31,9 +31,16 @@ function spawnConfetti(container: HTMLDivElement) {
     el.animate(
       [
         { transform: "translate(-50%,-50%) scale(1)", opacity: 1 },
-        { transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0)`, opacity: 0 },
+        {
+          transform: `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px)) scale(0)`,
+          opacity: 0,
+        },
       ],
-      { duration: 900 + Math.random() * 400, easing: "cubic-bezier(.2,.8,.3,1)", fill: "forwards" }
+      {
+        duration: 900 + Math.random() * 400,
+        easing: "cubic-bezier(.2,.8,.3,1)",
+        fill: "forwards",
+      }
     );
     setTimeout(() => el.remove(), 1400);
   }
@@ -59,10 +66,25 @@ const ALL_SUBJECTS = [
 ];
 
 const STUDY_STYLES = [
-  { key: "quizzes", emoji: "🧠", label: "Quizzes", desc: "Test yourself until it sticks" },
-  { key: "flashcards", emoji: "🃏", label: "Flashcards", desc: "Flip through key concepts" },
-  { key: "summaries", emoji: "📋", label: "Summaries", desc: "Read the key points fast" },
-];
+  {
+    key: "quiz",
+    emoji: "🧠",
+    label: "Quizzes",
+    desc: "Test yourself until it sticks",
+  },
+  {
+    key: "flashcards",
+    emoji: "🃏",
+    label: "Flashcards",
+    desc: "Flip through key concepts",
+  },
+  {
+    key: "summaries",
+    emoji: "📋",
+    label: "Summaries",
+    desc: "Read the key points fast",
+  },
+] as const;
 
 const TIPS = [
   "💡 Tip: Paste any text to instantly generate a quiz",
@@ -117,7 +139,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const [direction, setDirection] = useState(1);
   const [name, setName] = useState("");
   const [subjects, setSubjects] = useState<Set<string>>(new Set());
-  const [style, setStyle] = useState("");
+  const [preferredMethods, setPreferredMethodsState] = useState<Set<string>>(new Set());
   const confettiRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -141,11 +163,11 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const finish = useCallback(() => {
     setUserName(name.trim() || "");
     setUserSubjects(Array.from(subjects));
-    setStudyStyle(style);
+    setPreferredMethods(Array.from(preferredMethods));
     completeOnboarding();
     onComplete();
     navigate("/study");
-  }, [name, subjects, style, onComplete, navigate]);
+  }, [name, subjects, preferredMethods, onComplete, navigate]);
 
   const toggleSubject = useCallback((subj: string) => {
     setSubjects((prev) => {
@@ -156,17 +178,14 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     });
   }, []);
 
-  // Auto-select study style with delay
-  const selectStyle = useCallback(
-    (s: string) => {
-      setStyle(s);
-      setTimeout(() => {
-        setDirection(1);
-        setStep(4);
-      }, 400);
-    },
-    []
-  );
+  const togglePreferredMethod = useCallback((method: string) => {
+    setPreferredMethodsState((prev) => {
+      const next = new Set(prev);
+      if (next.has(method)) next.delete(method);
+      else next.add(method);
+      return next;
+    });
+  }, []);
 
   // Focus input on step 1
   useEffect(() => {
@@ -181,7 +200,10 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       setTimeout(() => {
         if (confettiRef.current) {
           for (let burst = 0; burst < 3; burst++) {
-            setTimeout(() => confettiRef.current && spawnConfetti(confettiRef.current), burst * 200);
+            setTimeout(
+              () => confettiRef.current && spawnConfetti(confettiRef.current),
+              burst * 200
+            );
           }
         }
       }, 300);
