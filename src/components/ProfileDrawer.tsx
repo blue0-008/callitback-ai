@@ -61,10 +61,10 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(name);
   const [clearOpen, setClearOpen] = useState(false);
+  const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const [goal, setGoal] = useState(getDailyGoal());
-  const [avatarKey, setAvatarKey] = useState(0); // force re-render on avatar change
+  const [avatarKey, setAvatarKey] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const stats = getStats();
   const todaySessions = getTodaySessions();
