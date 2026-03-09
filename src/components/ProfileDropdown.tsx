@@ -77,7 +77,7 @@ const ProfileDropdown = () => {
             {displayName}
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={() => { setNameValue(getUserName()); setEditOpen(true); }}>
+          <DropdownMenuItem onClick={() => { setNameValue(username); setEditOpen(true); }}>
             <Pencil className="h-3.5 w-3.5 mr-2" /> Edit Name
           </DropdownMenuItem>
           <DropdownMenuItem onClick={toggleTheme}>

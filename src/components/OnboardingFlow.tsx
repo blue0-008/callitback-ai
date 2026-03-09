@@ -134,6 +134,7 @@ interface OnboardingFlowProps {
 
 const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const navigate = useNavigate();
+  const { setUsername: setContextUsername } = useUser();
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [name, setName] = useState("");
@@ -159,12 +160,12 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   }, [onComplete]);
 
   const finish = useCallback(() => {
-    setUserName(name.trim() || "");
+    setContextUsername(name.trim() || "");
     setPreferredMethods(Array.from(preferredMethods));
     completeOnboarding();
     onComplete();
     navigate("/study");
-  }, [name, preferredMethods, onComplete, navigate]);
+  }, [name, preferredMethods, onComplete, navigate, setContextUsername]);
 
   const togglePreferredMethod = useCallback((method: string) => {
     setPreferredMethodsState((prev) => {

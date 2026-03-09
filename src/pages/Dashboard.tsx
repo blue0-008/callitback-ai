@@ -100,7 +100,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <UserAvatar size={48} />
             <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
-              {getGreeting()}, {useUser().username || "Hey there"} <Zap className="h-6 w-6 text-primary animate-pulse" />
+              {getGreeting()}, {username || "Hey there"} <Zap className="h-6 w-6 text-primary animate-pulse" />
             </h1>
           </div>
           {stats.streak > 0 ? (

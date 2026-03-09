@@ -188,9 +188,9 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
                 </div>
               ) : (
                 <>
-                  <span className="text-base font-heading font-bold">{name}</span>
+                  <span className="text-base font-heading font-bold">{username || "User"}</span>
                   <button
-                    onClick={() => { setEditValue(name); setEditing(true); }}
+                    onClick={() => { setEditValue(username || "User"); setEditing(true); }}
                     className="h-6 w-6 rounded flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors"
                     aria-label="Edit name"
                   >
