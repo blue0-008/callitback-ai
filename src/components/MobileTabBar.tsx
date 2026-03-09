@@ -2,17 +2,19 @@ import { LayoutDashboard, BookOpen, HelpCircle, Layers, Library } from "lucide-r
 import { NavLink as RouterLink, useLocation } from "react-router-dom";
 import { getDueToday } from "@/lib/store";
 import { cn } from "@/lib/utils";
-
-const items = [
-  { title: "Home", url: "/dashboard", icon: LayoutDashboard, badge: 0 },
-  { title: "Study", url: "/study", icon: BookOpen, badge: 0 },
-  { title: "Library", url: "/library", icon: Library, badge: 0 },
-  { title: "Quiz", url: "/quiz", icon: HelpCircle, badge: 0 },
-  { title: "Cards", url: "/flashcards", icon: Layers, badge: getDueToday() },
-];
+import { useTranslation } from "react-i18next";
 
 export function MobileTabBar() {
   const location = useLocation();
+  const { t } = useTranslation();
+
+  const items = [
+    { title: t("nav.home"), url: "/dashboard", icon: LayoutDashboard, badge: 0 },
+    { title: t("nav.study"), url: "/study", icon: BookOpen, badge: 0 },
+    { title: t("nav.library"), url: "/library", icon: Library, badge: 0 },
+    { title: t("nav.quiz"), url: "/quiz", icon: HelpCircle, badge: 0 },
+    { title: t("nav.cards"), url: "/flashcards", icon: Layers, badge: getDueToday() },
+  ];
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 glass border-t border-border/40 backdrop-blur-xl bg-background/90 safe-area-bottom">

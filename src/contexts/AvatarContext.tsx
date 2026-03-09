@@ -1,27 +1,33 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
+import i18n from "@/lib/i18n";
 
 const AVATAR_KEY = "studysprint_avatar";
 const NAME_KEY = "studysprint_userName";
+const LANG_KEY = "studysprint_language";
+
+export type AppLanguage = "en" | "ar" | "fr" | "es";
 
 interface UserContextType {
   avatarUrl: string | null;
   username: string;
+  language: AppLanguage;
   setAvatar: (url: string) => void;
   clearAvatar: () => void;
   setUsername: (name: string) => void;
+  setLanguage: (lang: AppLanguage) => void;
 }
 
 const UserContext = createContext<UserContextType>({
   avatarUrl: null,
   username: "",
+  language: "en",
   setAvatar: () => {},
   clearAvatar: () => {},
   setUsername: () => {},
+  setLanguage: () => {},
 });
 
 export const useUser = () => useContext(UserContext);
-
-// Keep backward-compat alias
 export const useAvatar = useUser;
 
 export const UserProvider = ({ children }: { children: ReactNode }) => {
@@ -30,6 +36,9 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   );
   const [username, setUsernameState] = useState<string>(
     () => localStorage.getItem(NAME_KEY) || ""
+  );
+  const [language, setLanguageState] = useState<AppLanguage>(
+    () => (localStorage.getItem(LANG_KEY) as AppLanguage) || "en"
   );
 
   const setAvatar = useCallback((url: string) => {
@@ -47,8 +56,35 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
     setUsernameState(name);
   }, []);
 
+  const setLanguage = useCallback((lang: AppLanguage) => {
+    localStorage.setItem(LANG_KEY, lang);
+    setLanguageState(lang);
+    i18n.changeLanguage(lang);
+    // RTL support
+    const isRtl = lang === "ar";
+    document.documentElement.dir = isRtl ? "rtl" : "ltr";
+    document.documentElement.lang = lang;
+    if (isRtl) {
+      document.documentElement.classList.add("rtl");
+    } else {
+      document.documentElement.classList.remove("rtl");
+    }
+  }, []);
+
+  // Initialize dir/lang on mount
+  useEffect(() => {
+    const isRtl = language === "ar";
+    document.documentElement.dir = isRtl ? "rtl" : "ltr";
+    document.documentElement.lang = language;
+    if (isRtl) {
+      document.documentElement.classList.add("rtl");
+    } else {
+      document.documentElement.classList.remove("rtl");
+    }
+  }, [language]);
+
   return (
-    <UserContext.Provider value={{ avatarUrl, username, setAvatar, clearAvatar, setUsername }}>
+    <UserContext.Provider value={{ avatarUrl, username, language, setAvatar, clearAvatar, setUsername, setLanguage }}>
       {children}
     </UserContext.Provider>
   );
