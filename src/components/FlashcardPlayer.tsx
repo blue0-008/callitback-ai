@@ -150,7 +150,7 @@ const DotTrail = ({
 
 /* ── Main component ────────────────────────────── */
 
-const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit }: FlashcardPlayerProps) => {
+const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit, onComplete }: FlashcardPlayerProps) => {
   const [cards, setCards] = useState(initialCards);
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
