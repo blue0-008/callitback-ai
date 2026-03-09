@@ -410,35 +410,44 @@ const Study = () => {
           </div>
 
           {/* Generate button */}
-          <button
-            onClick={handleGenerate}
-            disabled={generating || (!content.trim() && source === "text")}
-            className={cn(
-              "w-full relative overflow-hidden rounded-lg px-6 py-3.5 text-sm font-semibold transition-all duration-300",
-              "bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground",
-              "hover:shadow-[0_0_30px_hsl(239_84%_67%/0.4)] hover:scale-[1.01]",
-              "disabled:opacity-50 disabled:hover:shadow-none disabled:hover:scale-100",
-              "flex items-center justify-center gap-2",
-              generating && "animate-pulse"
-            )}
-          >
-            {generating ? (
-              <AnimatePresence mode="wait">
-                <motion.span
-                  key={loadingIdx}
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="flex items-center gap-2"
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <span className="w-full">
+                <button
+                  onClick={handleGenerate}
+                  disabled={generating || selectedModes.size === 0 || (!content.trim() && source === "text")}
+                  className={cn(
+                    "w-full relative overflow-hidden rounded-lg px-6 py-3.5 text-sm font-semibold transition-all duration-300",
+                    "bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground",
+                    "hover:shadow-[0_0_30px_hsl(239_84%_67%/0.4)] hover:scale-[1.01]",
+                    "disabled:opacity-50 disabled:hover:shadow-none disabled:hover:scale-100 disabled:cursor-not-allowed",
+                    "flex items-center justify-center gap-2",
+                    generating && "animate-pulse"
+                  )}
                 >
-                  <RefreshCw className="h-4 w-4 animate-spin" />
-                  {loadingMessages[loadingIdx]}
-                </motion.span>
-              </AnimatePresence>
-            ) : (
-              <><Sparkles className="h-4 w-4" /> Generate Study Materials</>
+                  {generating ? (
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={loadingIdx}
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -10 }}
+                        className="flex items-center gap-2"
+                      >
+                        <RefreshCw className="h-4 w-4 animate-spin" />
+                        {loadingMessages[loadingIdx]}
+                      </motion.span>
+                    </AnimatePresence>
+                  ) : (
+                    <><Sparkles className="h-4 w-4" /> Generate Study Materials</>
+                  )}
+                </button>
+              </span>
+            </TooltipTrigger>
+            {selectedModes.size === 0 && (
+              <TooltipContent>Pick at least one output type</TooltipContent>
             )}
-          </button>
+          </Tooltip>
         </div>
 
         {/* ===== RIGHT — Output Panel ===== */}
