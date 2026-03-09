@@ -342,7 +342,7 @@ const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit }: FlashcardPl
                     key={c.id}
                     onClick={() => goTo(i)}
                     className={cn(
-                      "w-full text-left rounded-lg px-2.5 py-1.5 text-[11px] transition-all flex items-center gap-2",
+                      "w-full text-left rtl:text-right rounded-lg px-2.5 py-1.5 text-[11px] transition-all flex items-center gap-2 rtl:flex-row-reverse",
                       i === current
                         ? "bg-primary/15 text-primary"
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
