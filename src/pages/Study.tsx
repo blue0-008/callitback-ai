@@ -398,7 +398,7 @@ const Study = () => {
                   onClick={() => toggleMode(m.key)}
                   className={cn(
                     "glass rounded-lg p-3 text-left transition-all duration-200 border",
-                    active ? "border-primary/50 bg-primary/10 shadow-[0_0_15px_hsl(239_84%_67%/0.15)]" : "border-border/30 hover:border-border/60"
+                    active ? "border-primary/50 bg-primary/10 shadow-[0_0_15px_hsl(38_92%_50%/0.15)]" : "border-border/30 hover:border-border/60"
                   )}
                 >
                   <span className="text-lg">{m.icon}</span>
