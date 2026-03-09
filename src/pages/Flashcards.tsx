@@ -123,9 +123,9 @@ const Flashcards = () => {
                 <span className="text-accent font-medium">{d.dueToday} due today</span>
               )}
             </div>
-            <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+            <div className="relative w-full h-1.5 rounded-full bg-muted overflow-hidden">
               <div
-                className="h-full rounded-full bg-accent transition-all"
+                className="absolute inset-y-0 ltr:left-0 rtl:right-0 h-full rounded-full bg-accent transition-all"
                 style={{ width: `${d.cards > 0 ? Math.round((d.mastered / d.cards) * 100) : 0}%` }}
               />
             </div>

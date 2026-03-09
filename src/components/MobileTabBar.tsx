@@ -34,7 +34,7 @@ export function MobileTabBar() {
               <span className="relative">
                 <item.icon className="h-5 w-5" />
                 {item.badge > 0 && (
-                  <span className="absolute -top-1 -right-1.5 min-w-[14px] h-[14px] flex items-center justify-center rounded-full bg-accent text-accent-foreground text-[8px] font-bold px-0.5">
+                  <span className="absolute -top-1 ltr:-right-1.5 rtl:-left-1.5 min-w-[14px] h-[14px] flex items-center justify-center rounded-full bg-accent text-accent-foreground text-[8px] font-bold px-0.5">
                     {item.badge}
                   </span>
                 )}

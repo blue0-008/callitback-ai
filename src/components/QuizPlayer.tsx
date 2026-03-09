@@ -237,7 +237,7 @@ const QuizPlayer = ({
             onClick={onExit}
             className="w-full flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold bg-secondary/60 border border-border/40 text-foreground hover:bg-secondary transition-all"
           >
-            <ArrowRight className="h-3.5 w-3.5" /> New Quiz
+            <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" /> New Quiz
           </button>
           <button
             onClick={onExit}
@@ -261,9 +261,9 @@ const QuizPlayer = ({
           <span>Question {current + 1} of {total}</span>
           <span className="font-medium">{title}</span>
         </div>
-        <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+        <div className="relative w-full h-1.5 rounded-full bg-muted overflow-hidden">
           <motion.div
-            className="h-full rounded-full bg-primary"
+            className="absolute inset-y-0 ltr:left-0 rtl:right-0 rounded-full bg-primary"
             initial={false}
             animate={{ width: `${((current + 1) / total) * 100}%` }}
             transition={{ duration: 0.3 }}
@@ -273,10 +273,10 @@ const QuizPlayer = ({
 
       {/* Timer bar */}
       {timerEnabled && phase === "answering" && (
-        <div className="w-full h-1 rounded-full bg-muted overflow-hidden">
+        <div className="relative w-full h-1 rounded-full bg-muted overflow-hidden">
           <motion.div
             className={cn(
-              "h-full rounded-full transition-colors",
+              "absolute inset-y-0 ltr:left-0 rtl:right-0 rounded-full transition-colors",
               timeLeft > 10 ? "bg-accent" : "bg-red-500"
             )}
             initial={{ width: "100%" }}
@@ -334,11 +334,11 @@ const QuizPlayer = ({
                       : undefined
                   }
                   transition={{ duration: 0.4 }}
-                  className={cn(
-                    "flex items-center gap-3 rounded-xl border p-4 text-left transition-all duration-200 cursor-pointer",
-                    "disabled:cursor-default",
-                    cardClass
-                  )}
+                   className={cn(
+                     "flex items-center gap-3 rounded-xl border p-4 text-left rtl:text-right rtl:flex-row-reverse transition-all duration-200 cursor-pointer",
+                     "disabled:cursor-default",
+                     cardClass
+                   )}
                 >
                   <span
                     className={cn(
@@ -368,7 +368,7 @@ const QuizPlayer = ({
                 transition={{ duration: 0.3, delay: 0.15 }}
                 className="space-y-4"
               >
-                <div className="glass rounded-lg p-4 border-l-2 border-primary/40">
+                <div className="glass rounded-lg p-4 ltr:border-l-2 rtl:border-r-2 border-primary/40">
                   <p className="text-xs font-semibold text-primary mb-1">Explanation</p>
                   <p className="text-xs text-foreground/75 leading-relaxed">{q.explanation}</p>
                 </div>
@@ -386,7 +386,7 @@ const QuizPlayer = ({
                     </>
                   ) : (
                     <>
-                      Next Question <ArrowRight className="h-4 w-4" />
+                      Next Question <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                     </>
                   )}
                 </button>

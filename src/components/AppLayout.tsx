@@ -10,10 +10,13 @@ import { useFocusMode } from "@/hooks/useFocusMode";
 import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUser } from "@/contexts/AvatarContext";
 
 const AppLayout = () => {
   const { focusMode, toggleFocus } = useFocusMode();
   const isMobile = useIsMobile();
+  const { language } = useUser();
+  const isRtl = language === "ar";
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
@@ -32,12 +35,13 @@ const AppLayout = () => {
         <div className="flex-1 flex flex-col min-w-0">
           <header className={cn(
             "h-14 flex items-center border-b border-border/40 px-4 backdrop-blur-md bg-background/80 sticky top-0 z-30 transition-opacity duration-500",
-            focusMode && "opacity-30"
+            focusMode && "opacity-30",
+            isRtl && "flex-row-reverse"
           )}>
             {!isMobile && (
               <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Toggle sidebar" />
             )}
-            <div className="ml-auto flex items-center gap-2">
+            <div className={cn("flex items-center gap-2", isRtl ? "mr-auto" : "ml-auto")}>
               <button
                 onClick={toggleFocus}
                 className={cn(

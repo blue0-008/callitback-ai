@@ -147,13 +147,13 @@ const Progress = () => {
       <motion.div variants={item}>
         <GlassCard hover={false} className="space-y-3">
           <h2 className="text-sm font-heading font-semibold">Weekly Activity</h2>
-          <div className="flex gap-4">
-            <div className="flex flex-col gap-[3px] text-[9px] text-muted-foreground/60 pt-0.5">
+          <div className="flex gap-4 rtl:flex-row-reverse">
+            <div className="flex flex-col gap-[3px] text-[9px] text-muted-foreground/60 pt-0.5 rtl:text-right">
               {dayLabels.map((l, i) => (
                 <div key={i} className="h-[14px] flex items-center">{l}</div>
               ))}
             </div>
-            <div className="flex gap-[3px]">
+            <div className="flex gap-[3px] rtl:flex-row-reverse">
               {heatmapWeeks.map((week, wi) => (
                 <div key={wi} className="flex flex-col gap-[3px]">
                   {week.map((count, di) => (
@@ -167,7 +167,7 @@ const Progress = () => {
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-2 text-[9px] text-muted-foreground/50">
+          <div className="flex items-center gap-2 text-[9px] text-muted-foreground/50 rtl:flex-row-reverse">
             <span>Less</span>
             {[0, 1, 2, 4].map((c) => (
               <div key={c} className={cn("w-[10px] h-[10px] rounded-sm", heatColor(c))} />
@@ -239,7 +239,7 @@ const Progress = () => {
                   <div key={s.name} className="flex items-center gap-2 text-xs">
                     <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: s.color }} />
                     <span className="text-foreground/80">{s.name}</span>
-                    <span className="ml-auto text-muted-foreground">{totalSubjectTime > 0 ? Math.round((s.value / totalSubjectTime) * 100) : 0}%</span>
+                    <span className="ltr:ml-auto rtl:mr-auto text-muted-foreground">{totalSubjectTime > 0 ? Math.round((s.value / totalSubjectTime) * 100) : 0}%</span>
                   </div>
                 ))}
               </div>

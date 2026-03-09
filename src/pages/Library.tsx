@@ -47,7 +47,8 @@ function readStorage<T>(key: string, fallback: T): T {
 }
 
 function formatDate(value: number) {
-  return new Date(value).toLocaleDateString(undefined, {
+  const locale = typeof document !== "undefined" && document.documentElement.dir === "rtl" ? "ar-u-nu-latn" : undefined;
+  return new Date(value).toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",
@@ -195,12 +196,12 @@ const Library = () => {
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+        <Search className="absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search summaries, quizzes, flashcards..."
-          className="pl-9"
+          className="ltr:pl-9 rtl:pr-9"
         />
       </div>
 
@@ -250,7 +251,7 @@ const Library = () => {
                         openItem(item);
                       }}
                     >
-                      <Eye className="h-4 w-4 mr-2" /> Open
+                      <Eye className="h-4 w-4 ltr:mr-2 rtl:ml-2" /> Open
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={(e) => {
@@ -259,7 +260,7 @@ const Library = () => {
                       }}
                       className="text-destructive focus:text-destructive"
                     >
-                      <Trash2 className="h-4 w-4 mr-2" /> Delete
+                      <Trash2 className="h-4 w-4 ltr:mr-2 rtl:ml-2" /> Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
@@ -290,7 +291,7 @@ const Library = () => {
           <DialogHeader>
             <DialogTitle>{viewingSummary?.title}</DialogTitle>
           </DialogHeader>
-          <div className="overflow-y-auto pr-1 text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+          <div className="overflow-y-auto ltr:pr-1 rtl:pl-1 text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
             {viewingSummary?.summaryContent}
           </div>
         </DialogContent>

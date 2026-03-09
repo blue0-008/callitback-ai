@@ -96,7 +96,8 @@ const SummaryCard = ({
   onRegenerate: () => void;
 }) => {
   const preview = plainText(summary.content).slice(0, 160);
-  const date = new Date(summary.dateCreated).toLocaleDateString(undefined, {
+  const locale = typeof document !== "undefined" && document.documentElement.dir === "rtl" ? "ar-u-nu-latn" : undefined;
+  const date = new Date(summary.dateCreated).toLocaleDateString(locale, {
     month: "short",
     day: "numeric",
     year: "numeric",

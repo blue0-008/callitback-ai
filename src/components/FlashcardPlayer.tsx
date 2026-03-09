@@ -130,7 +130,7 @@ const DotTrail = ({
   if (dots[dots.length - 1] !== total - 1) dots.push(total - 1);
 
   return (
-    <div className="flex items-center gap-1 justify-center flex-wrap">
+    <div className="flex items-center gap-1 justify-center flex-wrap rtl:flex-row-reverse">
       {dots.map((idx) => (
         <div
           key={idx}
@@ -342,7 +342,7 @@ const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit }: FlashcardPl
                     key={c.id}
                     onClick={() => goTo(i)}
                     className={cn(
-                      "w-full text-left rounded-lg px-2.5 py-1.5 text-[11px] transition-all flex items-center gap-2",
+                      "w-full text-left rtl:text-right rounded-lg px-2.5 py-1.5 text-[11px] transition-all flex items-center gap-2 rtl:flex-row-reverse",
                       i === current
                         ? "bg-primary/15 text-primary"
                         : "text-muted-foreground hover:text-foreground hover:bg-secondary/50"
@@ -368,9 +368,9 @@ const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit }: FlashcardPl
         onTouchEnd={handleTouchEnd}
       >
         {/* Top bar */}
-        <div className="flex items-center justify-between">
-          <button onClick={onExit} className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-            <ChevronLeft className="h-3 w-3" /> Back
+        <div className="flex items-center justify-between rtl:flex-row-reverse">
+          <button onClick={onExit} className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 rtl:flex-row-reverse">
+            <ChevronLeft className="h-3 w-3 rtl:rotate-180" /> Back
           </button>
           <span className="text-xs text-muted-foreground font-medium">
             Card {current + 1} of {total}
@@ -440,20 +440,20 @@ const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit }: FlashcardPl
         </div>
 
         {/* Nav arrows */}
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-4 rtl:flex-row-reverse">
           <button
             onClick={() => goTo(current - 1)}
             disabled={current === 0}
             className="p-2 rounded-lg hover:bg-secondary/60 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
           </button>
           <button
             onClick={() => goTo(current + 1)}
             disabled={current === total - 1}
             className="p-2 rounded-lg hover:bg-secondary/60 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 rtl:rotate-180" />
           </button>
         </div>
       </div>

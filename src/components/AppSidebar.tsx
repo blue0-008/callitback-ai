@@ -30,6 +30,7 @@ export function AppSidebar() {
   const location = useLocation();
   const { t } = useTranslation();
   const { language, setLanguage } = useUser();
+  const isRtl = language === "ar";
 
   const currentLang = LANGUAGES.find((l) => l.code === language) || LANGUAGES[0];
 
@@ -42,10 +43,10 @@ export function AppSidebar() {
   ];
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0 rtl:border-r-0 rtl:border-l-0">
+    <Sidebar side={isRtl ? "right" : "left"} collapsible="icon" className="border-r-0 rtl:border-r-0 rtl:border-l-0">
       <SidebarContent className="pt-4 flex flex-col h-full">
         {/* Logo */}
-        <div className="flex items-center gap-2 px-4 mb-6">
+        <div className="flex items-center gap-2 px-4 mb-6 rtl:flex-row-reverse rtl:justify-end">
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/20">
             <Zap className="w-4 h-4 text-primary" />
           </div>
@@ -67,7 +68,7 @@ export function AppSidebar() {
                       <NavLink
                         to={item.url}
                         end
-                        className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+                        className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 rtl:flex-row-reverse rtl:justify-end rtl:text-right ${
                           active
                             ? "bg-primary/15 text-primary"
                             : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
@@ -77,7 +78,7 @@ export function AppSidebar() {
                         <span className="relative shrink-0">
                           <item.icon className={`h-4 w-4 transition-colors ${active ? "text-primary" : ""}`} />
                           {item.badge > 0 && (
-                            <span className="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] flex items-center justify-center rounded-full bg-accent text-accent-foreground text-[9px] font-bold px-0.5">
+                            <span className="absolute -top-1.5 ltr:-right-1.5 rtl:-left-1.5 min-w-[14px] h-[14px] flex items-center justify-center rounded-full bg-accent text-accent-foreground text-[9px] font-bold px-0.5">
                               {item.badge}
                             </span>
                           )}
@@ -101,7 +102,7 @@ export function AppSidebar() {
             <PopoverTrigger asChild>
               <button
                 className={cn(
-                  "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors w-full",
+                  "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors w-full rtl:flex-row-reverse rtl:justify-between",
                   "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 )}
                 aria-label={t("profile.language", "Language")}
@@ -115,7 +116,7 @@ export function AppSidebar() {
                 )}
               </button>
             </PopoverTrigger>
-            <PopoverContent side="right" align="end" className="w-44 p-2" sideOffset={8}>
+            <PopoverContent side={isRtl ? "left" : "right"} align="end" className="w-44 p-2" sideOffset={8}>
               <div className="space-y-1">
                 {LANGUAGES.map((lang) => (
                   <button
