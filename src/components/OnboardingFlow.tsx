@@ -426,23 +426,31 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
             >
               <div className="space-y-2">
                 <h2 className="text-xl font-heading font-bold">What's your go-to study style?</h2>
-                <p className="text-xs text-muted-foreground">Pick one — you can always change later</p>
+                <p className="text-xs text-muted-foreground">
+                  Pick as many as you like — you can always change this later
+                </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 w-full max-w-lg">
                 {STUDY_STYLES.map((s) => {
-                  const selected = style === s.key;
+                  const selected = preferredMethods.has(s.key);
                   return (
                     <button
                       key={s.key}
-                      onClick={() => selectStyle(s.key)}
+                      onClick={() => togglePreferredMethod(s.key)}
                       className={cn(
-                        "glass rounded-xl p-5 text-center border transition-all duration-200 space-y-2",
+                        "glass rounded-xl p-5 text-center border transition-all duration-200 space-y-2 relative",
                         selected
-                          ? "border-primary/60 bg-primary/10 shadow-[0_0_20px_hsl(239_84%_67%/0.2)] scale-[1.03]"
+                          ? "border-primary/60 bg-primary/10 shadow-[0_0_20px_hsl(239_84%_67%/0.2)]"
                           : "border-border/30 hover:border-border/60 hover:bg-secondary/30"
                       )}
+                      aria-pressed={selected}
                     >
+                      {selected && (
+                        <span className="absolute top-3 right-3 h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                          <Check className="h-4 w-4" />
+                        </span>
+                      )}
                       <span className="text-2xl">{s.emoji}</span>
                       <p className="text-sm font-semibold">{s.label}</p>
                       <p className="text-[10px] text-muted-foreground">{s.desc}</p>
@@ -450,6 +458,21 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                   );
                 })}
               </div>
+
+              <AnimatePresence>
+                {preferredMethods.size > 0 && (
+                  <motion.button
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    transition={{ duration: 0.25, ease: "easeOut" }}
+                    onClick={next}
+                    className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(239_84%_67%/0.3)] hover:scale-[1.01]"
+                  >
+                    Continue →
+                  </motion.button>
+                )}
+              </AnimatePresence>
             </motion.div>
           )}
 
