@@ -15,8 +15,6 @@ const AppLayout = () => {
   const { focusMode, toggleFocus } = useFocusMode();
   const isMobile = useIsMobile();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const displayName = getUserName() || "User";
-  const initial = displayName.charAt(0).toUpperCase();
 
   return (
     <SidebarProvider>
