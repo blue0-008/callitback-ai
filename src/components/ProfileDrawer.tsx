@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Pencil, Check, Palette, Trash2, RotateCcw, Download, Sun, Moon } from "lucide-react";
+import { X, Pencil, Check, Trash2, RotateCcw, Download, Sun, Moon, Camera } from "lucide-react";
+import UserAvatar, { getAvatarUrl, setAvatarUrl } from "@/components/UserAvatar";
 import { toast } from "@/hooks/use-toast";
 import { getUserName, setUserName } from "@/lib/userPrefs";
 import { getStats } from "@/lib/store";
