@@ -257,6 +257,14 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
               <RotateCcw className="h-4 w-4 text-muted-foreground" />
               <span>Reset Onboarding</span>
             </button>
+
+            <button
+              onClick={handleExport}
+              className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground hover:bg-secondary/60 transition-colors"
+            >
+              <Download className="h-4 w-4 text-muted-foreground" />
+              <span>Export My Data</span>
+            </button>
           </div>
         </div>
       </div>
