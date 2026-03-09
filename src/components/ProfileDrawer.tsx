@@ -109,6 +109,13 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
     window.location.reload();
   };
 
+  const handleExport = async () => {
+    toast({ title: "Preparing your export...", description: "Generating PDF" });
+    const { generateExportPdf } = await import("@/lib/exportPdf");
+    await generateExportPdf();
+    toast({ title: "Export ready! Check your downloads ✅" });
+  };
+
   const handleGoalChange = (n: number) => {
     setGoal(n);
     setDailyGoal(n);
