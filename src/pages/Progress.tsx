@@ -147,13 +147,13 @@ const Progress = () => {
       <motion.div variants={item}>
         <GlassCard hover={false} className="space-y-3">
           <h2 className="text-sm font-heading font-semibold">Weekly Activity</h2>
-          <div className="flex gap-4">
-            <div className="flex flex-col gap-[3px] text-[9px] text-muted-foreground/60 pt-0.5">
+          <div className="flex gap-4 rtl:flex-row-reverse">
+            <div className="flex flex-col gap-[3px] text-[9px] text-muted-foreground/60 pt-0.5 rtl:text-right">
               {dayLabels.map((l, i) => (
                 <div key={i} className="h-[14px] flex items-center">{l}</div>
               ))}
             </div>
-            <div className="flex gap-[3px]">
+            <div className="flex gap-[3px] rtl:flex-row-reverse">
               {heatmapWeeks.map((week, wi) => (
                 <div key={wi} className="flex flex-col gap-[3px]">
                   {week.map((count, di) => (

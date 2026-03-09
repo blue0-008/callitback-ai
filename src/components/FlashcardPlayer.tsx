@@ -130,7 +130,7 @@ const DotTrail = ({
   if (dots[dots.length - 1] !== total - 1) dots.push(total - 1);
 
   return (
-    <div className="flex items-center gap-1 justify-center flex-wrap">
+    <div className="flex items-center gap-1 justify-center flex-wrap rtl:flex-row-reverse">
       {dots.map((idx) => (
         <div
           key={idx}

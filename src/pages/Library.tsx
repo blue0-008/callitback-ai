@@ -195,12 +195,12 @@ const Library = () => {
       </div>
 
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
+        <Search className="absolute ltr:left-3 rtl:right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground pointer-events-none" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search summaries, quizzes, flashcards..."
-          className="pl-9"
+          className="ltr:pl-9 rtl:pr-9"
         />
       </div>
 
