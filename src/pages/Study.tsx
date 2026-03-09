@@ -145,7 +145,7 @@ const Study = () => {
   const toggleMode = useCallback((mode: OutputMode) => {
     setSelectedModes((prev) => {
       const next = new Set(prev);
-      if (next.has(mode) && next.size > 1) next.delete(mode);
+      if (next.has(mode)) next.delete(mode);
       else next.add(mode);
       return next;
     });
