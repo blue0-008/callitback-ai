@@ -1,4 +1,4 @@
-import { LayoutDashboard, BookOpen, HelpCircle, Layers, BarChart3, Zap, FileText } from "lucide-react";
+import { LayoutDashboard, BookOpen, HelpCircle, Layers, Zap, Library } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { getDueToday } from "@/lib/store";
@@ -16,10 +16,9 @@ import {
 const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, badge: 0 },
   { title: "Study", url: "/study", icon: BookOpen, badge: 0 },
-  { title: "Summaries", url: "/summaries", icon: FileText, badge: 0 },
+  { title: "Library", url: "/library", icon: Library, badge: 0 },
   { title: "Quiz", url: "/quiz", icon: HelpCircle, badge: 0 },
   { title: "Flashcards", url: "/flashcards", icon: Layers, badge: getDueToday() },
-  { title: "Progress", url: "/progress", icon: BarChart3, badge: 0 },
 ];
 
 export function AppSidebar() {
