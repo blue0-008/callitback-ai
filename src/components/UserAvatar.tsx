@@ -1,8 +1,5 @@
-import { Zap } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { getUserName } from "@/lib/userPrefs";
-
 const AVATAR_KEY = "studysprint_avatar";
+const NAME_KEY = "studysprint_userName";
 
 export function getAvatarUrl(): string | null {
   return localStorage.getItem(AVATAR_KEY);
@@ -22,43 +19,47 @@ interface UserAvatarProps {
 }
 
 const UserAvatar = ({ size = 36, className }: UserAvatarProps) => {
-  const savedAvatar = getAvatarUrl();
-  const name = getUserName();
-  const style = { width: size, height: size, minWidth: size, minHeight: size };
+  const avatar = localStorage.getItem(AVATAR_KEY);
+  const name = localStorage.getItem(NAME_KEY);
+  const initial = name ? name.charAt(0).toUpperCase() : "⚡";
+  const fontSize = Math.max(Math.round(size * 0.42), 12);
 
-  // Priority 1 & 2: user has explicitly set an avatar (uploaded photo or DiceBear selection)
-  if (savedAvatar) {
-    return (
-      <img
-        src={savedAvatar}
-        alt="Avatar"
-        className={cn("rounded-full object-cover bg-secondary", className)}
-        style={style}
-      />
-    );
-  }
+  const containerStyle: React.CSSProperties = {
+    width: size,
+    height: size,
+    minWidth: size,
+    minHeight: size,
+  };
 
-  // Priority 3: show user's first initial
-  if (name) {
-    const initial = name.charAt(0).toUpperCase();
-    const fontSize = Math.round(size * 0.42);
+  if (avatar) {
     return (
-      <div
-        className={cn("rounded-full flex items-center justify-center font-bold", className)}
-        style={{ ...style, backgroundColor: "#F59E0B", color: "#0F1117", fontSize }}
-      >
-        {initial}
+      <div style={containerStyle} className={className}>
+        <img
+          src={avatar}
+          alt="avatar"
+          className="rounded-full w-full h-full object-cover"
+          style={{ width: size, height: size }}
+        />
       </div>
     );
   }
 
-  // Priority 4: no name, no avatar — show ⚡
   return (
     <div
-      className={cn("rounded-full bg-primary/20 flex items-center justify-center", className)}
-      style={style}
+      style={{
+        ...containerStyle,
+        backgroundColor: "#F59E0B",
+        color: "#0F1117",
+        borderRadius: "50%",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        fontWeight: 700,
+        fontSize,
+      }}
+      className={className}
     >
-      <Zap className="text-primary" style={{ width: size * 0.45, height: size * 0.45 }} />
+      {initial}
     </div>
   );
 };
