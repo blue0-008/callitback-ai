@@ -4,52 +4,24 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const BASE = "https://api.dicebear.com/7.x/adventurer/svg?";
+const BASE = "https://api.dicebear.com/7.x/adventurer/svg?backgroundColor=ffffff&seed=";
 
 const ROWS = [
   {
     label: "Girls, Light Tones",
-    avatars: [
-      "seed=Luna&skinColor=f9c9b6",
-      "seed=Zara&skinColor=f9c9b6&hair=long01",
-      "seed=Nova&skinColor=ecad80&hair=long02",
-      "seed=Mia&skinColor=f9c9b6&hair=long03",
-      "seed=Aria&skinColor=ecad80&hair=buns",
-      "seed=Stella&skinColor=f9c9b6&hair=curly01",
-    ],
+    seeds: ["Luna", "Zara", "Nova", "Mia", "Aria", "Stella"],
   },
   {
     label: "Girls, Deep Tones",
-    avatars: [
-      "seed=Amara&skinColor=794b30",
-      "seed=Zuri&skinColor=614335&hair=long01",
-      "seed=Imani&skinColor=a4572b&hair=long02",
-      "seed=Nadia&skinColor=794b30&hair=buns",
-      "seed=Layla&skinColor=614335&hair=curly01",
-      "seed=Sana&skinColor=a4572b&hair=long03",
-    ],
+    seeds: ["Amara", "Zuri", "Imani", "Nadia", "Layla", "Sana"],
   },
   {
     label: "Boys, Light Tones",
-    avatars: [
-      "seed=Kai&skinColor=f9c9b6",
-      "seed=Leo&skinColor=f9c9b6&hair=short01",
-      "seed=Max&skinColor=ecad80&hair=short02",
-      "seed=Finn&skinColor=f9c9b6&hair=short03",
-      "seed=Jake&skinColor=ecad80&hair=curly02",
-      "seed=Ryan&skinColor=f9c9b6&hair=short04",
-    ],
+    seeds: ["Kai", "Leo", "Max", "Finn", "Jake", "Ryan"],
   },
   {
     label: "Boys, Deep Tones",
-    avatars: [
-      "seed=Kofi&skinColor=794b30",
-      "seed=Malik&skinColor=614335&hair=short01",
-      "seed=Andre&skinColor=a4572b&hair=short02",
-      "seed=Omar&skinColor=794b30&hair=curly02",
-      "seed=Jalen&skinColor=614335&hair=short03",
-      "seed=Theo&skinColor=a4572b&hair=short04",
-    ],
+    seeds: ["Kofi", "Malik", "Andre", "Omar", "Jalen", "Theo"],
   },
 ];
 
