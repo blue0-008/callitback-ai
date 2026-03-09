@@ -137,7 +137,6 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [name, setName] = useState("");
-  const [subjects, setSubjects] = useState<Set<string>>(new Set());
   const [preferredMethods, setPreferredMethodsState] = useState<Set<string>>(new Set());
   const confettiRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
