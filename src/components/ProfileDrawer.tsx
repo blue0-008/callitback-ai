@@ -164,23 +164,16 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
         <div className="flex-1 overflow-y-auto p-5 space-y-6">
           {/* SECTION 1 — Profile Header */}
           <div className="flex flex-col items-center pt-4 space-y-2">
-            <div className="relative">
-              <UserAvatar key={avatarKey} size={80} className="shadow-lg" />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-secondary border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
-                aria-label="Change photo"
-              >
-                <Camera className="h-3.5 w-3.5" />
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="hidden"
-                onChange={handlePhotoUpload}
-              />
-            </div>
+            <button
+              onClick={() => setAvatarPickerOpen(true)}
+              className="relative group cursor-pointer rounded-full"
+              aria-label="Change avatar"
+            >
+              <UserAvatar key={avatarKey} size={80} className="shadow-lg group-hover:opacity-80 transition-opacity" />
+              <div className="absolute inset-0 rounded-full flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera className="h-5 w-5 text-white" />
+              </div>
+            </button>
 
             <div className="flex items-center gap-1.5">
               {editing ? (
