@@ -3,6 +3,7 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { MobileTabBar } from "@/components/MobileTabBar";
 import AnimatedOutlet from "@/components/AnimatedOutlet";
 import PomodoroTimer from "@/components/PomodoroTimer";
+import ProfileDropdown from "@/components/ProfileDropdown";
 import { useFocusMode } from "@/hooks/useFocusMode";
 import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
