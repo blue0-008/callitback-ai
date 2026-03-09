@@ -74,8 +74,19 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   const stats = getStats();
   const todaySessions = getTodaySessions();
   const joinDate = getJoinDate();
-  const initial = name.charAt(0).toUpperCase();
-  const avatarColor = nameToColor(name);
+  const progress = Math.min((todaySessions / goal) * 100, 100);
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setAvatarUrl(base64);
+      setAvatarKey((k) => k + 1);
+    };
+    reader.readAsDataURL(file);
+  };
   const progress = Math.min((todaySessions / goal) * 100, 100);
 
   useEffect(() => {
