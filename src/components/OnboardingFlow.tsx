@@ -7,7 +7,6 @@ import {
   completeOnboarding,
   setPreferredMethods,
   setUserName,
-  setUserSubjects,
 } from "@/lib/userPrefs";
 
 /* ── Confetti (reuse pattern from QuizPlayer) ──── */
@@ -138,12 +137,11 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [name, setName] = useState("");
-  const [subjects, setSubjects] = useState<Set<string>>(new Set());
   const [preferredMethods, setPreferredMethodsState] = useState<Set<string>>(new Set());
   const confettiRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const TOTAL_STEPS = 5;
+  const TOTAL_STEPS = 4;
 
   const next = useCallback(() => {
     setDirection(1);
@@ -162,21 +160,11 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
 
   const finish = useCallback(() => {
     setUserName(name.trim() || "");
-    setUserSubjects(Array.from(subjects));
     setPreferredMethods(Array.from(preferredMethods));
     completeOnboarding();
     onComplete();
     navigate("/study");
-  }, [name, subjects, preferredMethods, onComplete, navigate]);
-
-  const toggleSubject = useCallback((subj: string) => {
-    setSubjects((prev) => {
-      const next = new Set(prev);
-      if (next.has(subj)) next.delete(subj);
-      else next.add(subj);
-      return next;
-    });
-  }, []);
+  }, [name, preferredMethods, onComplete, navigate]);
 
   const togglePreferredMethod = useCallback((method: string) => {
     setPreferredMethodsState((prev) => {
@@ -196,7 +184,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
 
   // Confetti on final step
   useEffect(() => {
-    if (step === 4 && confettiRef.current) {
+    if (step === 3 && confettiRef.current) {
       setTimeout(() => {
         if (confettiRef.current) {
           for (let burst = 0; burst < 3; burst++) {
@@ -236,7 +224,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       )}
 
       {/* Back button */}
-      {step >= 2 && step <= 4 && (
+      {step >= 2 && step <= 3 && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -358,64 +346,10 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
             </motion.div>
           )}
 
-          {/* STEP 2 — Subjects */}
+          {/* STEP 2 — Study style */}
           {step === 2 && (
             <motion.div
               key="step2"
-              custom={direction}
-              variants={slideVariants}
-              initial="enter"
-              animate="center"
-              exit="exit"
-              transition={{ duration: 0.35, ease: "easeOut" }}
-              className="flex flex-col items-center text-center space-y-6"
-            >
-              <div className="space-y-2">
-                <h2 className="text-xl font-heading font-bold">What do you study?</h2>
-                <p className="text-xs text-muted-foreground">Select at least one subject</p>
-              </div>
-
-              <div className="flex flex-wrap gap-2 justify-center max-w-md">
-                {ALL_SUBJECTS.map((s) => {
-                  const selected = subjects.has(s.name);
-                  return (
-                    <button
-                      key={s.name}
-                      onClick={() => toggleSubject(s.name)}
-                      className={cn(
-                        "flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-medium border transition-all duration-200",
-                        selected
-                          ? "bg-primary/15 border-primary/50 text-primary shadow-[0_0_12px_hsl(239_84%_67%/0.15)]"
-                          : "bg-secondary/50 border-border/40 text-muted-foreground hover:text-foreground hover:border-border"
-                      )}
-                    >
-                      <span>{s.emoji}</span>
-                      {s.name}
-                      {selected && <Check className="h-3 w-3 ml-0.5" />}
-                    </button>
-                  );
-                })}
-              </div>
-
-              <button
-                onClick={next}
-                disabled={subjects.size === 0}
-                className={cn(
-                  "flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-300",
-                  "bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground",
-                  "hover:shadow-[0_0_30px_hsl(239_84%_67%/0.3)] hover:scale-[1.01]",
-                  "disabled:opacity-30 disabled:hover:shadow-none disabled:hover:scale-100"
-                )}
-              >
-                Almost there →
-              </button>
-            </motion.div>
-          )}
-
-          {/* STEP 3 — Study style */}
-          {step === 3 && (
-            <motion.div
-              key="step3"
               custom={direction}
               variants={slideVariants}
               initial="enter"
@@ -476,8 +410,8 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
             </motion.div>
           )}
 
-          {/* STEP 4 — All set! */}
-          {step === 4 && (
+          {/* STEP 3 — All set! */}
+          {step === 3 && (
             <motion.div
               key="step4"
               custom={direction}
