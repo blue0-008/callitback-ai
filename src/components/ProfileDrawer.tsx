@@ -301,6 +301,12 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AvatarPickerModal
+        open={avatarPickerOpen}
+        onClose={() => setAvatarPickerOpen(false)}
+        onSave={handleAvatarSave}
+      />
     </>
   );
 };
