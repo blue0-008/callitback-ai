@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { useCountUp } from "@/hooks/useCountUp";
 import { getSessions, getStats, getDecks, getQuizzes, type StudySession } from "@/lib/store";
 import { useUser } from "@/contexts/AvatarContext";
+import { useTranslation } from "react-i18next";
 import { useState, useEffect, useMemo } from "react";
 
 /* ── Animated stat card ────────────────────────── */
@@ -33,19 +34,12 @@ const StatCard = ({ label, numValue, suffix, icon, delay }: { label: string; num
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.07 } } };
 const item = { hidden: { opacity: 0, y: 12 }, show: { opacity: 1, y: 0, transition: { duration: 0.35 } } };
 
-function getGreeting() {
-  const h = new Date().getHours();
-  if (h >= 5 && h < 12) return "Good morning";
-  if (h >= 12 && h < 17) return "Good afternoon";
-  if (h >= 17 && h < 21) return "Good evening";
-  return "Studying late";
-}
-
 /* ── Component ─────────────────────────────────── */
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { username } = useUser();
+  const { t } = useTranslation();
   const [sessions, setSessions] = useState<StudySession[]>([]);
   const [stats, setStats] = useState(getStats());
 
@@ -54,7 +48,14 @@ const Dashboard = () => {
     setStats(getStats());
   }, []);
 
-  // Sessions this week
+  function getGreeting() {
+    const h = new Date().getHours();
+    if (h >= 5 && h < 12) return t("dashboard.goodMorning");
+    if (h >= 12 && h < 17) return t("dashboard.goodAfternoon");
+    if (h >= 17 && h < 21) return t("dashboard.goodEvening");
+    return t("dashboard.studyingLate");
+  }
+
   const sessionsThisWeek = useMemo(() => {
     const now = new Date();
     const dayOfWeek = now.getDay();
@@ -64,12 +65,10 @@ const Dashboard = () => {
     return sessions.filter(s => new Date(s.date) >= startOfWeek).length;
   }, [sessions]);
 
-  // Last 3 items from localStorage (sessions as continue items)
   const continueItems = useMemo(() => {
     return sessions.slice(0, 3);
   }, [sessions]);
 
-  // Weak spots: quiz sessions with score < 70%
   const weakSpots = useMemo(() => {
     return sessions
       .filter(s => s.type === "quiz" || s.type === "summary + quiz")
@@ -78,10 +77,10 @@ const Dashboard = () => {
   }, [sessions]);
 
   const quickStats = [
-    { label: "Sessions This Week", numValue: sessionsThisWeek, suffix: "", icon: "📊" },
-    { label: "Quizzes Taken", numValue: stats.totalQuizzesTaken, suffix: "", icon: "🧠" },
-    { label: "Cards Mastered", numValue: stats.cardsMastered, suffix: "", icon: "🃏" },
-    { label: "Best Streak", numValue: stats.bestStreak, suffix: " days", icon: "🏆" },
+    { label: t("dashboard.sessionsThisWeek"), numValue: sessionsThisWeek, suffix: "", icon: "📊" },
+    { label: t("dashboard.quizzesTaken"), numValue: stats.totalQuizzesTaken, suffix: "", icon: "🧠" },
+    { label: t("dashboard.cardsMastered"), numValue: stats.cardsMastered, suffix: "", icon: "🃏" },
+    { label: t("dashboard.bestStreak"), numValue: stats.bestStreak, suffix: ` ${t("dashboard.days")}`, icon: "🏆" },
   ];
 
   const typeRoute: Record<string, string> = {
@@ -100,16 +99,16 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <UserAvatar size={48} />
             <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
-              {getGreeting()}, {username || "Hey there"} <Zap className="h-6 w-6 text-primary animate-pulse" />
+              {getGreeting()}, {username || t("dashboard.heyThere")} <Zap className="h-6 w-6 text-primary animate-pulse" />
             </h1>
           </div>
           {stats.streak > 0 ? (
             <div className="flex items-center gap-2">
               <Flame className="h-5 w-5 text-orange-500" />
-              <span className="text-sm font-semibold text-foreground">🔥 {stats.streak} day streak</span>
+              <span className="text-sm font-semibold text-foreground">🔥 {t("dashboard.streakDays", { count: stats.streak })}</span>
             </div>
           ) : (
-            <p className="text-sm text-muted-foreground">Start studying today to begin your streak 🔥</p>
+            <p className="text-sm text-muted-foreground">{t("dashboard.startStreak")}</p>
           )}
         </div>
       </motion.div>
@@ -125,18 +124,18 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* LEFT — Continue Studying */}
         <motion.div variants={item} className="space-y-3">
-          <h2 className="text-lg font-heading font-semibold">Continue Studying</h2>
+          <h2 className="text-lg font-heading font-semibold">{t("dashboard.continueStudying")}</h2>
           {continueItems.length === 0 ? (
             <EmptyState
               icon={<BookOpen className="h-8 w-8 text-primary/40" />}
-              title="Nothing yet"
-              description="Start your first sprint! ⚡"
+              title={t("dashboard.nothingYet")}
+              description={t("dashboard.startFirstSprint")}
               action={
                 <button
                   onClick={() => navigate("/study")}
                   className="mt-2 flex items-center gap-2 rounded-lg px-4 py-2 text-xs font-semibold bg-primary/15 border border-primary/30 text-primary hover:bg-primary/25 transition-all"
                 >
-                  <Zap className="h-3.5 w-3.5" /> Go to Study
+                  <Zap className="h-3.5 w-3.5" /> {t("dashboard.goToStudy")}
                 </button>
               }
             />
@@ -153,7 +152,7 @@ const Dashboard = () => {
                     <span className="text-sm font-medium truncate">{s.topic}</span>
                   </div>
                   <span className="text-xs font-semibold text-primary flex items-center gap-1 shrink-0">
-                    Continue <ArrowRight className="h-3 w-3" />
+                    {t("dashboard.continue")} <ArrowRight className="h-3 w-3 rtl:rotate-180" />
                   </span>
                 </GlassCard>
               ))}
@@ -163,10 +162,10 @@ const Dashboard = () => {
 
         {/* RIGHT — Weak Spots */}
         <motion.div variants={item} className="space-y-3">
-          <h2 className="text-lg font-heading font-semibold">Weak Spots 🎯</h2>
+          <h2 className="text-lg font-heading font-semibold">{t("dashboard.weakSpots")}</h2>
           {weakSpots.length === 0 ? (
             <div className="glass rounded-lg p-6 text-center space-y-1">
-              <p className="text-sm text-muted-foreground">No weak spots yet. Keep it up! 💪</p>
+              <p className="text-sm text-muted-foreground">{t("dashboard.noWeakSpots")}</p>
             </div>
           ) : (
             <div className="flex flex-wrap gap-2">
@@ -190,7 +189,7 @@ const Dashboard = () => {
           onClick={() => navigate("/study")}
           className="w-full flex items-center justify-center gap-2 rounded-xl px-6 py-4 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_40px_hsl(38_92%_50%/0.35)] hover:scale-[1.01] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
         >
-          <Zap className="h-4 w-4" /> Start a New Sprint ⚡
+          <Zap className="h-4 w-4" /> {t("dashboard.startNewSprint")}
         </button>
       </motion.div>
     </motion.div>

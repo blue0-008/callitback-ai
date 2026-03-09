@@ -2,6 +2,7 @@ import { LayoutDashboard, BookOpen, HelpCircle, Layers, Zap, Library } from "luc
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { getDueToday } from "@/lib/store";
+import { useTranslation } from "react-i18next";
 import {
   Sidebar,
   SidebarContent,
@@ -13,21 +14,22 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
-const navItems = [
-  { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, badge: 0 },
-  { title: "Study", url: "/study", icon: BookOpen, badge: 0 },
-  { title: "Library", url: "/library", icon: Library, badge: 0 },
-  { title: "Quiz", url: "/quiz", icon: HelpCircle, badge: 0 },
-  { title: "Flashcards", url: "/flashcards", icon: Layers, badge: getDueToday() },
-];
-
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
+  const { t } = useTranslation();
+
+  const navItems = [
+    { title: t("nav.dashboard"), url: "/dashboard", icon: LayoutDashboard, badge: 0 },
+    { title: t("nav.study"), url: "/study", icon: BookOpen, badge: 0 },
+    { title: t("nav.library"), url: "/library", icon: Library, badge: 0 },
+    { title: t("nav.quiz"), url: "/quiz", icon: HelpCircle, badge: 0 },
+    { title: t("nav.flashcards"), url: "/flashcards", icon: Layers, badge: getDueToday() },
+  ];
 
   return (
-    <Sidebar collapsible="icon" className="border-r-0">
+    <Sidebar collapsible="icon" className="border-r-0 rtl:border-r-0 rtl:border-l-0">
       <SidebarContent className="pt-4">
         {/* Logo */}
         <div className="flex items-center gap-2 px-4 mb-6">
@@ -47,7 +49,7 @@ export function AppSidebar() {
               {navItems.map((item) => {
                 const active = location.pathname === item.url;
                 return (
-                  <SidebarMenuItem key={item.title}>
+                  <SidebarMenuItem key={item.url}>
                     <SidebarMenuButton asChild>
                       <NavLink
                         to={item.url}
