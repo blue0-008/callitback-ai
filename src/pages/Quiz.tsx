@@ -4,7 +4,7 @@ import { HelpCircle, Clock, CheckCircle2, Timer, TimerOff } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
 import EmptyState from "@/components/EmptyState";
 import QuizPlayer, { type QuizQuestion } from "@/components/QuizPlayer";
-import { getQuizzes, saveQuizzes, type SavedQuiz } from "@/lib/store";
+import { getQuizzes, saveQuizzes, getStats, saveStats, type SavedQuiz } from "@/lib/store";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -57,12 +57,18 @@ const Quiz = () => {
         questions={quizQuestions}
         timerEnabled={timerEnabled}
         onExit={() => {
-          // Mark as completed
+          // Mark as completed and update stats
           const updated = getQuizzes().map((q) =>
             q.id === activeQuiz ? { ...q, completed: true } : q
           );
           saveQuizzes(updated);
           setQuizzes(updated);
+          
+          // Increment totalQuizzesTaken stat
+          const stats = getStats();
+          stats.totalQuizzesTaken++;
+          saveStats(stats);
+          
           setActiveQuiz(null);
           navigate("/quiz", { replace: true });
         }}

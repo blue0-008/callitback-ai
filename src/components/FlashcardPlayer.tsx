@@ -27,6 +27,7 @@ interface FlashcardPlayerProps {
   deckTitle: string;
   cards: Flashcard[];
   onExit: () => void;
+  onComplete?: (masteredCount: number, totalReviewed: number) => void;
 }
 
 /* ── Progress ring (reused pattern) ────────────── */
@@ -149,7 +150,7 @@ const DotTrail = ({
 
 /* ── Main component ────────────────────────────── */
 
-const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit }: FlashcardPlayerProps) => {
+const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit, onComplete }: FlashcardPlayerProps) => {
   const [cards, setCards] = useState(initialCards);
   const [current, setCurrent] = useState(0);
   const [flipped, setFlipped] = useState(false);
@@ -183,11 +184,10 @@ const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit }: FlashcardPl
 
   const markMastery = useCallback(
     (level: Mastery) => {
-      setMasteryMap((prev) => {
-        const next = new Map(prev);
-        next.set(card.id, level);
-        return next;
-      });
+      const newMap = new Map(masteryMap);
+      newMap.set(card.id, level);
+      setMasteryMap(newMap);
+      
       // Advance
       if (current < total - 1) {
         setDirection(1);
@@ -195,9 +195,12 @@ const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit }: FlashcardPl
         setFlipped(false);
       } else {
         setCompleted(true);
+        // Calculate and report mastery stats
+        const gotItCount = Array.from(newMap.values()).filter((m) => m === "got-it").length;
+        onComplete?.(gotItCount, total);
       }
     },
-    [card, current, total]
+    [card, current, total, masteryMap, onComplete]
   );
 
   const handleShuffle = useCallback(() => {

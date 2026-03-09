@@ -18,7 +18,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { getUserSubjects, getPreferredMethods } from "@/lib/userPrefs";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { getQuizzes, saveQuizzes, getDecks, saveDecks, addSession } from "@/lib/store";
+import { getQuizzes, saveQuizzes, getDecks, saveDecks, addSession, getStats, saveStats } from "@/lib/store";
+import { saveSummary, type SavedSummary } from "@/lib/summaryStore";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -285,6 +286,18 @@ const Study = () => {
             callStudyAI({ type: "summary", content: content.trim(), summaryStyle: "feynman", outputLanguage: activeLang }),
           ]);
           result.summary = { tldr: tldrRaw, deepDive: deepRaw, feynman: feynRaw };
+          
+          // Save summary to library
+          const summaryToSave: SavedSummary = {
+            id: `summary_${Date.now()}`,
+            subject: subject?.subject ?? "General",
+            mode: "tldr",
+            content: `## TL;DR\n${tldrRaw}\n\n## Deep Dive\n${deepRaw}\n\n## Feynman Style\n${feynRaw}`,
+            title: subject ? `${subject.subject} Summary` : content.trim().slice(0, 50) + "...",
+            dateCreated: Date.now(),
+            estimatedReadTime: Math.ceil((tldrRaw.length + deepRaw.length + feynRaw.length) / 1000),
+          };
+          saveSummary(summaryToSave);
         }
 
         if (mode === "quiz") {
