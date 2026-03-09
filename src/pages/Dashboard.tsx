@@ -7,7 +7,7 @@ import EmptyState from "@/components/EmptyState";
 import { useNavigate } from "react-router-dom";
 import { useCountUp } from "@/hooks/useCountUp";
 import { getSessions, getStats, getDecks, getQuizzes, type StudySession } from "@/lib/store";
-import { getUserName } from "@/lib/userPrefs";
+import { useUser } from "@/contexts/AvatarContext";
 import { useState, useEffect, useMemo } from "react";
 
 /* ── Animated stat card ────────────────────────── */
@@ -45,6 +45,7 @@ function getGreeting() {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { username } = useUser();
   const [sessions, setSessions] = useState<StudySession[]>([]);
   const [stats, setStats] = useState(getStats());
 
@@ -99,7 +100,7 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <UserAvatar size={48} />
             <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
-              {getGreeting()}, {getUserName() || "Hey there"} <Zap className="h-6 w-6 text-primary animate-pulse" />
+              {getGreeting()}, {username || "Hey there"} <Zap className="h-6 w-6 text-primary animate-pulse" />
             </h1>
           </div>
           {stats.streak > 0 ? (

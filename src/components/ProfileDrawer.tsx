@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Pencil, Check, Trash2, RotateCcw, Download, Sun, Moon, Camera } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
-import { useAvatar } from "@/contexts/AvatarContext";
+import { useUser } from "@/contexts/AvatarContext";
 import AvatarPickerModal from "@/components/AvatarPickerModal";
 import { toast } from "@/hooks/use-toast";
-import { getUserName, setUserName } from "@/lib/userPrefs";
 import { getStats } from "@/lib/store";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -58,10 +57,9 @@ interface Props {
 }
 
 const ProfileDrawer = ({ open, onClose }: Props) => {
-  const { setAvatar } = useAvatar();
-  const [name, setName] = useState(getUserName() || "User");
+  const { setAvatar, username, setUsername } = useUser();
   const [editing, setEditing] = useState(false);
-  const [editValue, setEditValue] = useState(name);
+  const [editValue, setEditValue] = useState(username || "User");
   const [clearOpen, setClearOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const [goal, setGoal] = useState(getDailyGoal());
@@ -89,8 +87,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
 
   const saveName = () => {
     const trimmed = editValue.trim() || "User";
-    setUserName(trimmed);
-    setName(trimmed);
+    setUsername(trimmed);
     setEditing(false);
   };
 
@@ -191,9 +188,9 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
                 </div>
               ) : (
                 <>
-                  <span className="text-base font-heading font-bold">{name}</span>
+                  <span className="text-base font-heading font-bold">{username || "User"}</span>
                   <button
-                    onClick={() => { setEditValue(name); setEditing(true); }}
+                    onClick={() => { setEditValue(username || "User"); setEditing(true); }}
                     className="h-6 w-6 rounded flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors"
                     aria-label="Edit name"
                   >
