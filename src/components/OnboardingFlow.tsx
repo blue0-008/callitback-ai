@@ -429,7 +429,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1], delay: 0.2 }}
                 className="relative"
               >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center text-3xl font-heading font-bold text-foreground shadow-[0_0_40px_hsl(239_84%_67%/0.25)]">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center text-3xl font-heading font-bold text-foreground shadow-[0_0_40px_hsl(38_92%_50%/0.25)]">
                   {initial}
                 </div>
                 <motion.div
