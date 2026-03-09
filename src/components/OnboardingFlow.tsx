@@ -375,7 +375,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                       className={cn(
                         "glass rounded-xl p-5 text-center border transition-all duration-200 space-y-2 relative",
                         selected
-                          ? "border-primary/60 bg-primary/10 shadow-[0_0_20px_hsl(239_84%_67%/0.2)]"
+                          ? "border-primary/60 bg-primary/10 shadow-[0_0_20px_hsl(38_92%_50%/0.2)]"
                           : "border-border/30 hover:border-border/60 hover:bg-secondary/30"
                       )}
                       aria-pressed={selected}
