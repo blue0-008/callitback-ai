@@ -93,10 +93,13 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
     setEditing(false);
   };
 
-  const isDark = () => document.documentElement.classList.contains("dark");
+  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
+
   const toggleTheme = () => {
-    document.documentElement.classList.toggle("dark");
-    localStorage.setItem("theme", isDark() ? "dark" : "light");
+    const next = !dark;
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("studysprint_theme", next ? "dark" : "light");
+    setDark(next);
   };
 
   const handleClearAll = () => {
