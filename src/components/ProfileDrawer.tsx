@@ -58,23 +58,17 @@ interface Props {
 }
 
 const ProfileDrawer = ({ open, onClose }: Props) => {
+  const { setAvatar } = useAvatar();
   const [name, setName] = useState(getUserName() || "User");
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(name);
   const [clearOpen, setClearOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const [goal, setGoal] = useState(getDailyGoal());
-  const [avatarKey, setAvatarKey] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const stats = getStats();
-  const todaySessions = getTodaySessions();
-  const joinDate = getJoinDate();
-  const progress = Math.min((todaySessions / goal) * 100, 100);
-
   const handleAvatarSave = (url: string) => {
-    setAvatarUrl(url);
-    setAvatarKey((k) => k + 1);
+    setAvatar(url);
   };
 
   useEffect(() => {
