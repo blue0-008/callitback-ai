@@ -409,6 +409,11 @@ const Study = () => {
             })}
           </div>
 
+          {/* Spacer + divider */}
+          <div className="pt-4 pb-2">
+            <div className="border-t border-border/30" />
+          </div>
+
           {/* Generate button */}
           <Tooltip>
             <TooltipTrigger asChild>
@@ -417,7 +422,7 @@ const Study = () => {
                   onClick={handleGenerate}
                   disabled={generating || selectedModes.size === 0 || (!content.trim() && source === "text")}
                   className={cn(
-                    "w-full relative overflow-hidden rounded-lg px-6 py-3.5 text-sm font-semibold transition-all duration-300",
+                    "w-full relative overflow-hidden rounded-lg px-6 py-5 text-sm font-semibold transition-all duration-300",
                     "bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground",
                     "hover:shadow-[0_0_30px_hsl(239_84%_67%/0.4)] hover:scale-[1.01]",
                     "disabled:opacity-50 disabled:hover:shadow-none disabled:hover:scale-100 disabled:cursor-not-allowed",
