@@ -1,4 +1,4 @@
-import { LayoutDashboard, BookOpen, HelpCircle, Layers, BarChart3 } from "lucide-react";
+import { LayoutDashboard, BookOpen, HelpCircle, Layers, BarChart3, FileText } from "lucide-react";
 import { NavLink as RouterLink, useLocation } from "react-router-dom";
 import { getDueToday } from "@/lib/store";
 import { cn } from "@/lib/utils";
@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 const items = [
   { title: "Home", url: "/dashboard", icon: LayoutDashboard, badge: 0 },
   { title: "Study", url: "/study", icon: BookOpen, badge: 0 },
+  { title: "Summaries", url: "/summaries", icon: FileText, badge: 0 },
   { title: "Quiz", url: "/quiz", icon: HelpCircle, badge: 0 },
   { title: "Cards", url: "/flashcards", icon: Layers, badge: getDueToday() },
   { title: "Stats", url: "/progress", icon: BarChart3, badge: 0 },
