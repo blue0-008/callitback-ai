@@ -114,6 +114,26 @@
     transition: background-color 0.3s ease, color 0.3s ease;
   }
 
+  /* RTL base alignment + form inputs */
+  [dir="rtl"] body {
+    text-align: right;
+  }
+
+  [dir="rtl"] input,
+  [dir="rtl"] textarea,
+  [dir="rtl"] select {
+    text-align: right;
+  }
+
+  /* Toast viewport: bottom-right even on small screens in RTL */
+  [dir="rtl"] .toast-viewport {
+    top: auto;
+    bottom: 0;
+    right: 0;
+    left: auto;
+    flex-direction: column;
+  }
+
   h1, h2, h3, h4, h5, h6 {
     font-family: var(--font-heading);
   }

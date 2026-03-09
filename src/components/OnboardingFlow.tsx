@@ -97,7 +97,7 @@ const TIPS = [
 /* ── Step dots ─────────────────────────────────── */
 
 const StepDots = ({ total, current }: { total: number; current: number }) => (
-  <div className="flex items-center gap-2 justify-center">
+  <div className="flex items-center gap-2 justify-center rtl:flex-row-reverse">
     {Array.from({ length: total }, (_, i) => (
       <motion.div
         key={i}
