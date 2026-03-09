@@ -30,11 +30,12 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
 const ProfileDropdown = () => {
+  const { username, setUsername } = useUser();
   const [editOpen, setEditOpen] = useState(false);
   const [clearOpen, setClearOpen] = useState(false);
-  const [nameValue, setNameValue] = useState(getUserName());
+  const [nameValue, setNameValue] = useState(username);
 
-  const displayName = getUserName() || "User";
+  const displayName = username || "User";
   const initial = displayName.charAt(0).toUpperCase();
 
   const isDark = () => document.documentElement.classList.contains("dark");
@@ -45,7 +46,7 @@ const ProfileDropdown = () => {
   };
 
   const handleSaveName = () => {
-    setUserName(nameValue.trim());
+    setUsername(nameValue.trim());
     setEditOpen(false);
   };
 
