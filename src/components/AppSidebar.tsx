@@ -68,7 +68,7 @@ export function AppSidebar() {
                       <NavLink
                         to={item.url}
                         end
-                        className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+                        className={`group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 rtl:flex-row-reverse rtl:justify-end rtl:text-right ${
                           active
                             ? "bg-primary/15 text-primary"
                             : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
