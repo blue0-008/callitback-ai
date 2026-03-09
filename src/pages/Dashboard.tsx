@@ -45,6 +45,7 @@ function getGreeting() {
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { username } = useUser();
   const [sessions, setSessions] = useState<StudySession[]>([]);
   const [stats, setStats] = useState(getStats());
 
