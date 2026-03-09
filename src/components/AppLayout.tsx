@@ -46,11 +46,9 @@ const AppLayout = () => {
                 aria-label="Toggle focus mode (F)"
                 title="Focus mode (F)"
               >
-                {focusMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {focusMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
-              <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary">
-                S
-              </div>
+              <ProfileDropdown />
             </div>
           </header>
           <main className={cn("flex-1 p-4 sm:p-6 overflow-auto", isMobile && "pb-20")}>
