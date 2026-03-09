@@ -114,7 +114,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   };
 
   const handleResetOnboarding = () => {
-    localStorage.removeItem("hasCompletedOnboarding");
+    localStorage.removeItem("callitback_onboarding");
     window.location.reload();
   };
 
