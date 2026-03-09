@@ -15,7 +15,8 @@ import {
 import GlassCard from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { getUserSubjects } from "@/lib/userPrefs";
+import { getUserSubjects, getPreferredMethods } from "@/lib/userPrefs";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { getQuizzes, saveQuizzes, getDecks, saveDecks, addSession } from "@/lib/store";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
