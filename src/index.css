@@ -151,4 +151,9 @@
   .page-transition {
     @apply animate-fade-in;
   }
+
+  /* RTL utility: flip directional icons */
+  .rtl .rtl\:rotate-180 {
+    transform: rotate(180deg);
+  }
 }
