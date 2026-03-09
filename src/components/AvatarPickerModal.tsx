@@ -149,12 +149,12 @@ const AvatarPickerModal = ({ open, onClose, onSave }: Props) => {
             <div key={row.label}>
               <p className="text-xs font-medium text-muted-foreground mb-2">{row.label}</p>
               <div className="grid grid-cols-6 gap-2">
-                {row.avatars.map((params) => {
-                  const url = BASE + params;
+                {row.seeds.map((seed) => {
+                  const url = BASE + seed;
                   const isSelected = selected === url && !uploadPreview;
                   return (
                     <button
-                      key={params}
+                      key={seed}
                       onClick={() => selectAvatar(url)}
                       className={cn(
                         "relative rounded-full overflow-hidden border-2 transition-all duration-200 bg-secondary aspect-square",
