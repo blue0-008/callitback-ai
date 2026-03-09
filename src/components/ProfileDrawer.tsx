@@ -87,7 +87,6 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
     };
     reader.readAsDataURL(file);
   };
-  const progress = Math.min((todaySessions / goal) * 100, 100);
 
   useEffect(() => {
     if (editing) inputRef.current?.focus();
