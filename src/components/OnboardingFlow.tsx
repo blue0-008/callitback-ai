@@ -166,15 +166,6 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     navigate("/study");
   }, [name, preferredMethods, onComplete, navigate]);
 
-  const toggleSubject = useCallback((subj: string) => {
-    setSubjects((prev) => {
-      const next = new Set(prev);
-      if (next.has(subj)) next.delete(subj);
-      else next.add(subj);
-      return next;
-    });
-  }, []);
-
   const togglePreferredMethod = useCallback((method: string) => {
     setPreferredMethodsState((prev) => {
       const next = new Set(prev);
