@@ -116,7 +116,7 @@ export function AppSidebar() {
                 )}
               </button>
             </PopoverTrigger>
-            <PopoverContent side="right" align="end" className="w-44 p-2" sideOffset={8}>
+            <PopoverContent side={isRtl ? "left" : "right"} align="end" className="w-44 p-2" sideOffset={8}>
               <div className="space-y-1">
                 {LANGUAGES.map((lang) => (
                   <button

@@ -41,7 +41,7 @@ const AppLayout = () => {
             {!isMobile && (
               <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Toggle sidebar" />
             )}
-            <div className="ml-auto flex items-center gap-2">
+            <div className={cn("flex items-center gap-2", isRtl ? "mr-auto" : "ml-auto")}>
               <button
                 onClick={toggleFocus}
                 className={cn(
