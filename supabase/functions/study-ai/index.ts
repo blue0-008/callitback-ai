@@ -6,10 +6,26 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type, x-supabase-client-platform, x-supabase-client-platform-version, x-supabase-client-runtime, x-supabase-client-runtime-version",
 };
 
+// ── Language instruction ──────────────────────────
+
+function languageInstruction(lang: string): string {
+  switch (lang) {
+    case "ar":
+      return `\n\nIMPORTANT: Respond ENTIRELY in Modern Standard Arabic (فصحى). Every word of your response must be in Arabic. No English at all.`;
+    case "fr":
+      return `\n\nIMPORTANT: Respond ENTIRELY in clear, formal French. Every word of your response must be in French. No English at all.`;
+    case "es":
+      return `\n\nIMPORTANT: Respond ENTIRELY in neutral Latin American Spanish. Every word of your response must be in Spanish. No English at all.`;
+    default:
+      return `\n\nIMPORTANT: Respond ENTIRELY in English.`;
+  }
+}
+
 // ── Prompts ──────────────────────────────────────
 
-const SUMMARY_PROMPTS: Record<string, string> = {
-  tldr: `You are an expert study assistant. The user will give you a piece of text, notes, or a topic.
+function buildSummaryPrompt(style: string, lang: string): string {
+  const base: Record<string, string> = {
+    tldr: `You are an expert study assistant. The user will give you a piece of text, notes, or a topic.
 
 Your job is to produce a TL;DR summary.
 
@@ -21,7 +37,7 @@ Rules:
 - Do NOT include an intro sentence or conclusion. Just the 5 bullets.
 - Format: • **Keyword**: explanation sentence.`,
 
-  deepDive: `You are an expert study assistant and educator. The user will give you text, notes, or a topic.
+    deepDive: `You are an expert study assistant and educator. The user will give you text, notes, or a topic.
 
 Your job is to produce a structured Deep Dive summary.
 
@@ -33,18 +49,20 @@ Rules:
 - Keep the total length under 400 words.
 - Use clear academic but approachable language.`,
 
-  feynman: `You are a brilliant teacher who can explain anything simply. The user will give you text, notes, or a topic.
+    feynman: `You are a brilliant teacher who can explain anything simply. The user will give you text, notes, or a topic.
 
 Your job is to explain it in Feynman style — as if teaching a curious 12-year-old.
 
 Rules:
-- Start with: "Imagine..." and use a real-world analogy in the first sentence.
+- Start with: "Imagine..." (or the equivalent opener in the target language) and use a real-world analogy in the first sentence.
 - Never use jargon without immediately explaining it in plain words.
 - Use short paragraphs (2-3 sentences max each).
 - Include at least 1 analogy or comparison to everyday life.
-- End with: "The big idea here is..." followed by one simple sentence that captures the core concept.
+- End with: "The big idea here is..." (or equivalent) followed by one simple sentence that captures the core concept.
 - Keep it under 250 words. Conversational, warm, and engaging.`,
-};
+  };
+  return (base[style] || base.tldr) + languageInstruction(lang);
+}
 
 const DETECT_SUBJECT_PROMPT = `You are a subject classifier. The user will paste text or a topic.
 
@@ -62,7 +80,21 @@ Computer Science, Literature, Languages, Law, Economics, Art, Music, Philosophy,
 
 Confidence is "high", "medium", or "low".`;
 
-function quizPrompt(difficulty: string, questionCount: number) {
+const DETECT_LANGUAGE_PROMPT = `You are a language detector. The user will paste text.
+
+Identify the language of the pasted text.
+
+Return ONLY a JSON object like this, no extra text:
+{
+  "language": "ar",
+  "confidence": "high"
+}
+
+The "language" field must be one of: "en", "ar", "fr", "es", "other".
+Confidence is "high", "medium", or "low".
+If the text is too short or mixed, use "other" with "low" confidence.`;
+
+function quizPrompt(difficulty: string, questionCount: number, lang: string): string {
   return `You are an expert quiz generator. The user will give you text, notes, or a topic.
 
 Generate a quiz with exactly ${questionCount} multiple choice questions at ${difficulty} difficulty.
@@ -93,10 +125,10 @@ Return ONLY valid JSON in this exact format, no extra text:
       "explanation": "Brief explanation of why A is correct."
     }
   ]
-}`;
+}` + languageInstruction(lang);
 }
 
-function flashcardPrompt(cardCount: number) {
+function flashcardPrompt(cardCount: number, lang: string): string {
   return `You are an expert flashcard creator trained in spaced repetition learning.
 The user will give you text, notes, or a topic.
 
@@ -122,7 +154,7 @@ Return ONLY valid JSON in this exact format, no extra text:
   ]
 }
 
-For the "tag" field use one of: "definition", "concept", "fact", "process", "cause-effect"`;
+For the "tag" field use one of: "definition", "concept", "fact", "process", "cause-effect"` + languageInstruction(lang);
 }
 
 // ── AI call helper ───────────────────────────────
@@ -165,7 +197,8 @@ serve(async (req) => {
   }
 
   try {
-    const { type, content, difficulty, questionCount, cardCount, summaryStyle } = await req.json();
+    const { type, content, difficulty, questionCount, cardCount, summaryStyle, outputLanguage } = await req.json();
+    const lang = outputLanguage || "en";
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) {
@@ -179,15 +212,20 @@ serve(async (req) => {
         result = await callAI(DETECT_SUBJECT_PROMPT, content, LOVABLE_API_KEY);
         break;
 
-      case "summary":
+      case "detect-language":
+        result = await callAI(DETECT_LANGUAGE_PROMPT, content, LOVABLE_API_KEY);
+        break;
+
+      case "summary": {
         const style = summaryStyle || "tldr";
-        const prompt = SUMMARY_PROMPTS[style] || SUMMARY_PROMPTS.tldr;
+        const prompt = buildSummaryPrompt(style, lang);
         result = await callAI(prompt, content, LOVABLE_API_KEY);
         break;
+      }
 
       case "quiz":
         result = await callAI(
-          quizPrompt(difficulty || "Intermediate", questionCount || 10),
+          quizPrompt(difficulty || "Intermediate", questionCount || 10, lang),
           content,
           LOVABLE_API_KEY
         );
@@ -195,7 +233,7 @@ serve(async (req) => {
 
       case "flashcards":
         result = await callAI(
-          flashcardPrompt(cardCount || 20),
+          flashcardPrompt(cardCount || 20, lang),
           content,
           LOVABLE_API_KEY
         );
@@ -203,7 +241,7 @@ serve(async (req) => {
 
       default:
         return new Response(
-          JSON.stringify({ error: "Invalid type. Use: detect-subject, summary, quiz, flashcards" }),
+          JSON.stringify({ error: "Invalid type. Use: detect-subject, detect-language, summary, quiz, flashcards" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
     }
