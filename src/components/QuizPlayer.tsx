@@ -334,11 +334,11 @@ const QuizPlayer = ({
                       : undefined
                   }
                   transition={{ duration: 0.4 }}
-                  className={cn(
-                    "flex items-center gap-3 rounded-xl border p-4 text-left transition-all duration-200 cursor-pointer",
-                    "disabled:cursor-default",
-                    cardClass
-                  )}
+                   className={cn(
+                     "flex items-center gap-3 rounded-xl border p-4 text-left rtl:text-right rtl:flex-row-reverse transition-all duration-200 cursor-pointer",
+                     "disabled:cursor-default",
+                     cardClass
+                   )}
                 >
                   <span
                     className={cn(
