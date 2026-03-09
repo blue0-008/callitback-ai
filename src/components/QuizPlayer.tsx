@@ -261,9 +261,9 @@ const QuizPlayer = ({
           <span>Question {current + 1} of {total}</span>
           <span className="font-medium">{title}</span>
         </div>
-        <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
+        <div className="relative w-full h-1.5 rounded-full bg-muted overflow-hidden">
           <motion.div
-            className="h-full rounded-full bg-primary"
+            className="absolute inset-y-0 ltr:left-0 rtl:right-0 rounded-full bg-primary"
             initial={false}
             animate={{ width: `${((current + 1) / total) * 100}%` }}
             transition={{ duration: 0.3 }}
