@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 /* ── helpers ──────────────────────────────────── */
 
 function getJoinDate(): string {
-  const key = "studysprint_joinDate";
+  const key = "callitback_joinDate";
   let d = localStorage.getItem(key);
   if (!d) {
     d = new Date().toISOString().slice(0, 10);
@@ -32,10 +32,10 @@ function getJoinDate(): string {
 }
 
 function getDailyGoal(): number {
-  return Number(localStorage.getItem("studysprint_dailyGoal")) || 3;
+  return Number(localStorage.getItem("callitback_dailyGoal")) || 3;
 }
 function setDailyGoal(n: number) {
-  localStorage.setItem("studysprint_dailyGoal", String(n));
+  localStorage.setItem("callitback_dailyGoal", String(n));
 }
 
 function getTodaySessions(): number {
