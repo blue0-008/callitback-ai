@@ -87,7 +87,7 @@ const FlipCard = ({
           "glass border transition-shadow duration-300",
           flipped
             ? "border-accent/30 shadow-[0_0_25px_hsl(38_92%_50%/0.1)]"
-            : "border-border/40 shadow-[0_0_25px_hsl(239_84%_67%/0.1)]"
+            : "border-border/40 shadow-[0_0_25px_hsl(38_92%_50%/0.1)]"
         )}
       >
         <div>

@@ -92,7 +92,7 @@ const PomodoroTimer = () => {
                   <circle cx="36" cy="36" r={r} fill="none" stroke="hsl(228 14% 18%)" strokeWidth="5" />
                   <circle
                     cx="36" cy="36" r={r} fill="none"
-                    stroke={phase === "study" ? "hsl(239 84% 67%)" : "hsl(38 92% 50%)"}
+                    stroke={phase === "study" ? "hsl(38 92% 50%)" : "hsl(142 71% 45%)"}
                     strokeWidth="5" strokeLinecap="round"
                     strokeDasharray={circ}
                     strokeDashoffset={offset}

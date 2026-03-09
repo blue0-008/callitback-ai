@@ -398,7 +398,7 @@ const Study = () => {
                   onClick={() => toggleMode(m.key)}
                   className={cn(
                     "glass rounded-lg p-3 text-left transition-all duration-200 border",
-                    active ? "border-primary/50 bg-primary/10 shadow-[0_0_15px_hsl(239_84%_67%/0.15)]" : "border-border/30 hover:border-border/60"
+                    active ? "border-primary/50 bg-primary/10 shadow-[0_0_15px_hsl(38_92%_50%/0.15)]" : "border-border/30 hover:border-border/60"
                   )}
                 >
                   <span className="text-lg">{m.icon}</span>
@@ -424,7 +424,7 @@ const Study = () => {
                   className={cn(
                     "w-full relative overflow-hidden rounded-lg px-6 py-5 text-sm font-semibold transition-all duration-300",
                     "bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground",
-                    "hover:shadow-[0_0_30px_hsl(239_84%_67%/0.4)] hover:scale-[1.01]",
+                    "hover:shadow-[0_0_30px_hsl(38_92%_50%/0.4)] hover:scale-[1.01]",
                     "disabled:opacity-50 disabled:hover:shadow-none disabled:hover:scale-100 disabled:cursor-not-allowed",
                     "flex items-center justify-center gap-2",
                     generating && "animate-pulse"
@@ -590,7 +590,7 @@ const Study = () => {
                     </div>
                     <button
                       onClick={() => navigate(`/quiz?id=${output.quizId}`)}
-                      className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(239_84%_67%/0.3)] hover:scale-[1.01] transition-all"
+                      className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(38_92%_50%/0.3)] hover:scale-[1.01] transition-all"
                     >
                       Start Now <ArrowRight className="h-4 w-4" />
                     </button>

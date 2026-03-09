@@ -49,7 +49,7 @@ function buildHeatmapWeeks(heatmap: Record<string, number>): number[][] {
 }
 
 const SUBJECT_COLORS = [
-  "hsl(239, 84%, 67%)",
+  "hsl(38, 92%, 50%)",
   "hsl(38, 92%, 50%)",
   "hsl(142, 71%, 45%)",
   "hsl(25, 95%, 53%)",
@@ -193,10 +193,10 @@ const Progress = () => {
                   <Line
                     type="monotone"
                     dataKey="score"
-                    stroke="hsl(239 84% 67%)"
+                    stroke="hsl(38 92% 50%)"
                     strokeWidth={2}
-                    dot={{ r: 3, fill: "hsl(239 84% 67%)" }}
-                    activeDot={{ r: 5, stroke: "hsl(239 84% 67%)", strokeWidth: 2, fill: "hsl(228 14% 7%)" }}
+                    dot={{ r: 3, fill: "hsl(38 92% 50%)" }}
+                    activeDot={{ r: 5, stroke: "hsl(38 92% 50%)", strokeWidth: 2, fill: "hsl(228 14% 7%)" }}
                   />
                 </LineChart>
               </ResponsiveContainer>

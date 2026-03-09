@@ -73,7 +73,7 @@ const ProgressRing = ({ pct }: { pct: number }) => {
         cy="70"
         r={r}
         fill="none"
-        stroke="hsl(239 84% 67%)"
+        stroke="hsl(38 92% 50%)"
         strokeWidth="10"
         strokeLinecap="round"
         strokeDasharray={circ}
@@ -377,7 +377,7 @@ const QuizPlayer = ({
                   className={cn(
                     "w-full flex items-center justify-center gap-2 rounded-lg px-4 py-3 text-sm font-semibold transition-all duration-300",
                     "bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground",
-                    "hover:shadow-[0_0_30px_hsl(239_84%_67%/0.3)] hover:scale-[1.01]"
+                    "hover:shadow-[0_0_30px_hsl(38_92%_50%/0.3)] hover:scale-[1.01]"
                   )}
                 >
                   {isLast ? (

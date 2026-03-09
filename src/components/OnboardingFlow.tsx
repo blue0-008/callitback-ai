@@ -282,7 +282,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               >
                 <button
                   onClick={next}
-                  className="flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_40px_hsl(239_84%_67%/0.35)] hover:scale-[1.02]"
+                  className="flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_40px_hsl(38_92%_50%/0.35)] hover:scale-[1.02]"
                 >
                   Let's Go →
                 </button>
@@ -331,7 +331,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
 
                 <button
                   onClick={next}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(239_84%_67%/0.3)] hover:scale-[1.01]"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(38_92%_50%/0.3)] hover:scale-[1.01]"
                 >
                   Continue →
                 </button>
@@ -375,7 +375,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                       className={cn(
                         "glass rounded-xl p-5 text-center border transition-all duration-200 space-y-2 relative",
                         selected
-                          ? "border-primary/60 bg-primary/10 shadow-[0_0_20px_hsl(239_84%_67%/0.2)]"
+                          ? "border-primary/60 bg-primary/10 shadow-[0_0_20px_hsl(38_92%_50%/0.2)]"
                           : "border-border/30 hover:border-border/60 hover:bg-secondary/30"
                       )}
                       aria-pressed={selected}
@@ -401,7 +401,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                     exit={{ opacity: 0, y: 8 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
                     onClick={next}
-                    className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(239_84%_67%/0.3)] hover:scale-[1.01]"
+                    className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(38_92%_50%/0.3)] hover:scale-[1.01]"
                   >
                     Continue →
                   </motion.button>
@@ -429,7 +429,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1], delay: 0.2 }}
                 className="relative"
               >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center text-3xl font-heading font-bold text-foreground shadow-[0_0_40px_hsl(239_84%_67%/0.25)]">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center text-3xl font-heading font-bold text-foreground shadow-[0_0_40px_hsl(38_92%_50%/0.25)]">
                   {initial}
                 </div>
                 <motion.div
@@ -458,7 +458,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
                 onClick={finish}
-                className="flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_40px_hsl(239_84%_67%/0.35)] hover:scale-[1.02]"
+                className="flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_40px_hsl(38_92%_50%/0.35)] hover:scale-[1.02]"
               >
                 <Zap className="h-4 w-4" /> Start Studying →
               </motion.button>

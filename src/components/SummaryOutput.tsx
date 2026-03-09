@@ -229,7 +229,7 @@ const SummaryOutput = ({ onStartQuiz }: SummaryOutputProps) => {
         className={cn(
           "w-full flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold transition-all duration-300",
           "bg-secondary/60 border border-border/40 text-foreground",
-          "hover:bg-primary/15 hover:border-primary/40 hover:text-primary hover:shadow-[0_0_20px_hsl(239_84%_67%/0.12)]"
+          "hover:bg-primary/15 hover:border-primary/40 hover:text-primary hover:shadow-[0_0_20px_hsl(38_92%_50%/0.12)]"
         )}
       >
         <HelpCircle className="h-3.5 w-3.5" />
