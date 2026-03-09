@@ -5,7 +5,7 @@ import GlassCard from "@/components/GlassCard";
 import SubjectBadge from "@/components/SubjectBadge";
 import EmptyState from "@/components/EmptyState";
 import FlashcardPlayer, { type Flashcard } from "@/components/FlashcardPlayer";
-import { getDecks, saveDecks, type SavedDeck } from "@/lib/store";
+import { getDecks, saveDecks, getStats, saveStats, type SavedDeck } from "@/lib/store";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
 function loadDeckCards(id: string): Flashcard[] {
