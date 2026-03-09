@@ -20,7 +20,14 @@
 
   <body>
     <script>
-      (function(){var t=localStorage.getItem('studysprint_theme');if(t==='light'){document.documentElement.classList.remove('dark')}else{document.documentElement.classList.add('dark');if(!t)localStorage.setItem('studysprint_theme','dark')}})();
+      (function(){
+        var t=localStorage.getItem('studysprint_theme');
+        if(t==='light'){document.documentElement.classList.remove('dark')}
+        else{document.documentElement.classList.add('dark');if(!t)localStorage.setItem('studysprint_theme','dark')}
+        var l=localStorage.getItem('studysprint_language')||'en';
+        document.documentElement.lang=l;
+        if(l==='ar'){document.documentElement.dir='rtl';document.documentElement.classList.add('rtl')}
+      })();
     </script>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
