@@ -16,6 +16,7 @@ export default {
       fontFamily: {
         heading: ["'Plus Jakarta Sans'", "sans-serif"],
         body: ["'DM Sans'", "sans-serif"],
+        cairo: ["'Cairo'", "sans-serif"],
       },
       colors: {
         border: "hsl(var(--border))",
