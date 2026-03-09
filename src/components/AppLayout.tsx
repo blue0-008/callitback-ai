@@ -35,7 +35,8 @@ const AppLayout = () => {
         <div className="flex-1 flex flex-col min-w-0">
           <header className={cn(
             "h-14 flex items-center border-b border-border/40 px-4 backdrop-blur-md bg-background/80 sticky top-0 z-30 transition-opacity duration-500",
-            focusMode && "opacity-30"
+            focusMode && "opacity-30",
+            isRtl && "flex-row-reverse"
           )}>
             {!isMobile && (
               <SidebarTrigger className="text-muted-foreground hover:text-foreground transition-colors" aria-label="Toggle sidebar" />
