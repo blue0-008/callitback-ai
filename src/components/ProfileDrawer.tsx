@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Pencil, Check, Palette, Trash2, RotateCcw } from "lucide-react";
+import { X, Pencil, Check, Palette, Trash2, RotateCcw, Download } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import { getUserName, setUserName } from "@/lib/userPrefs";
 import { getStats } from "@/lib/store";
 import { Progress } from "@/components/ui/progress";
@@ -106,6 +107,13 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   const handleResetOnboarding = () => {
     localStorage.removeItem("hasCompletedOnboarding");
     window.location.reload();
+  };
+
+  const handleExport = async () => {
+    toast({ title: "Preparing your export...", description: "Generating PDF" });
+    const { generateExportPdf } = await import("@/lib/exportPdf");
+    await generateExportPdf();
+    toast({ title: "Export ready! Check your downloads ✅" });
   };
 
   const handleGoalChange = (n: number) => {
@@ -255,6 +263,14 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
             >
               <RotateCcw className="h-4 w-4 text-muted-foreground" />
               <span>Reset Onboarding</span>
+            </button>
+
+            <button
+              onClick={handleExport}
+              className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground hover:bg-secondary/60 transition-colors"
+            >
+              <Download className="h-4 w-4 text-muted-foreground" />
+              <span>Export My Data</span>
             </button>
           </div>
         </div>
