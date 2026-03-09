@@ -60,6 +60,21 @@ const Flashcards = () => {
           setActiveDeck(null);
           navigate("/flashcards", { replace: true });
         }}
+        onComplete={(masteredCount, totalReviewed) => {
+          // Update stats
+          const stats = getStats();
+          stats.totalCardsReviewed += totalReviewed;
+          stats.cardsMastered += masteredCount;
+          saveStats(stats);
+          
+          // Update deck mastery in store
+          if (deck) {
+            const updatedDecks = getDecks().map((d) =>
+              d.id === activeDeck ? { ...d, mastered: masteredCount, dueToday: Math.max(0, d.cards - masteredCount) } : d
+            );
+            saveDecks(updatedDecks);
+          }
+        }}
       />
     );
   }
