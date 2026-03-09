@@ -53,6 +53,12 @@
     --font-body: 'DM Sans', sans-serif;
   }
 
+  /* Arabic RTL font override */
+  .rtl {
+    --font-heading: 'Cairo', sans-serif;
+    --font-body: 'Cairo', sans-serif;
+  }
+
   .dark {
     --background: 228 14% 7%;
     --foreground: 220 20% 92%;
