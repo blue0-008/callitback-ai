@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Pencil, Check, Palette, Trash2, RotateCcw, Download } from "lucide-react";
+import { X, Pencil, Check, Palette, Trash2, RotateCcw, Download, Sun, Moon } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { getUserName, setUserName } from "@/lib/userPrefs";
 import { getStats } from "@/lib/store";
@@ -93,10 +93,13 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
     setEditing(false);
   };
 
-  const isDark = () => document.documentElement.classList.contains("dark");
+  const [dark, setDark] = useState(() => document.documentElement.classList.contains("dark"));
+
   const toggleTheme = () => {
-    document.documentElement.classList.toggle("dark");
-    localStorage.setItem("theme", isDark() ? "dark" : "light");
+    const next = !dark;
+    document.documentElement.classList.toggle("dark", next);
+    localStorage.setItem("studysprint_theme", next ? "dark" : "light");
+    setDark(next);
   };
 
   const handleClearAll = () => {
@@ -245,8 +248,8 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
               onClick={toggleTheme}
               className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground hover:bg-secondary/60 transition-colors"
             >
-              <Palette className="h-4 w-4 text-muted-foreground" />
-              <span>Toggle Theme</span>
+              {dark ? <Moon className="h-4 w-4 text-muted-foreground" /> : <Sun className="h-4 w-4 text-muted-foreground" />}
+              <span>{dark ? "Switch to Light Mode" : "Switch to Dark Mode"}</span>
             </button>
 
             <button
