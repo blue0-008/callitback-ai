@@ -7,7 +7,7 @@ import EmptyState from "@/components/EmptyState";
 import { useNavigate } from "react-router-dom";
 import { useCountUp } from "@/hooks/useCountUp";
 import { getSessions, getStats, getDecks, getQuizzes, type StudySession } from "@/lib/store";
-import { getUserName } from "@/lib/userPrefs";
+import { useUser } from "@/contexts/AvatarContext";
 import { useState, useEffect, useMemo } from "react";
 
 /* ── Animated stat card ────────────────────────── */
