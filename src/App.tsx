@@ -5,7 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { FocusProvider } from "@/hooks/useFocusMode";
-import { AvatarProvider } from "@/contexts/AvatarContext";
+import { UserProvider } from "@/contexts/AvatarContext";
 import { hasCompletedOnboarding } from "@/lib/userPrefs";
 import AppLayout from "./components/AppLayout";
 import OnboardingFlow from "./components/OnboardingFlow";
