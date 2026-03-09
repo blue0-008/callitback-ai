@@ -1,18 +1,5 @@
 import { User } from "lucide-react";
-
-const AVATAR_KEY = "studysprint_avatar";
-
-export function getAvatarUrl(): string | null {
-  return localStorage.getItem(AVATAR_KEY);
-}
-
-export function setAvatarUrl(url: string) {
-  localStorage.setItem(AVATAR_KEY, url);
-}
-
-export function clearAvatarUrl() {
-  localStorage.removeItem(AVATAR_KEY);
-}
+import { useAvatar } from "@/contexts/AvatarContext";
 
 interface UserAvatarProps {
   size?: number;
@@ -20,13 +7,13 @@ interface UserAvatarProps {
 }
 
 const UserAvatar = ({ size = 36, className }: UserAvatarProps) => {
-  const avatar = localStorage.getItem(AVATAR_KEY);
+  const { avatarUrl } = useAvatar();
   const iconSize = Math.max(Math.round(size * 0.55), 14);
 
-  if (avatar) {
+  if (avatarUrl) {
     return (
       <img
-        src={avatar}
+        src={avatarUrl}
         alt="avatar"
         className={className}
         style={{

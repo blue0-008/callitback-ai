@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Pencil, Check, Trash2, RotateCcw, Download, Sun, Moon, Camera } from "lucide-react";
-import UserAvatar, { setAvatarUrl } from "@/components/UserAvatar";
+import UserAvatar from "@/components/UserAvatar";
+import { useAvatar } from "@/contexts/AvatarContext";
 import AvatarPickerModal from "@/components/AvatarPickerModal";
 import { toast } from "@/hooks/use-toast";
 import { getUserName, setUserName } from "@/lib/userPrefs";
@@ -57,13 +58,13 @@ interface Props {
 }
 
 const ProfileDrawer = ({ open, onClose }: Props) => {
+  const { setAvatar } = useAvatar();
   const [name, setName] = useState(getUserName() || "User");
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(name);
   const [clearOpen, setClearOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const [goal, setGoal] = useState(getDailyGoal());
-  const [avatarKey, setAvatarKey] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const stats = getStats();
@@ -72,8 +73,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   const progress = Math.min((todaySessions / goal) * 100, 100);
 
   const handleAvatarSave = (url: string) => {
-    setAvatarUrl(url);
-    setAvatarKey((k) => k + 1);
+    setAvatar(url);
   };
 
   useEffect(() => {
@@ -169,7 +169,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
               className="relative group cursor-pointer rounded-full"
               aria-label="Change avatar"
             >
-              <UserAvatar key={avatarKey} size={80} className="shadow-lg group-hover:opacity-80 transition-opacity" />
+              <UserAvatar size={80} className="shadow-lg group-hover:opacity-80 transition-opacity" />
               <div className="absolute inset-0 rounded-full flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Camera className="h-5 w-5 text-white" />
               </div>
