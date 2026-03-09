@@ -421,8 +421,8 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
             </motion.div>
           )}
 
-          {/* STEP 4 — All set! */}
-          {step === 4 && (
+          {/* STEP 3 — All set! */}
+          {step === 3 && (
             <motion.div
               key="step4"
               custom={direction}
