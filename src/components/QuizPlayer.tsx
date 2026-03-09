@@ -73,7 +73,7 @@ const ProgressRing = ({ pct }: { pct: number }) => {
         cy="70"
         r={r}
         fill="none"
-        stroke="hsl(239 84% 67%)"
+        stroke="hsl(38 92% 50%)"
         strokeWidth="10"
         strokeLinecap="round"
         strokeDasharray={circ}
