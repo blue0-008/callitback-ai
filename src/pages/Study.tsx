@@ -420,7 +420,7 @@ const Study = () => {
               <span className="w-full">
                 <button
                   onClick={handleGenerate}
-                  disabled={generating || selectedModes.size === 0 || (!content.trim() && source === "text")}
+                  disabled={generating || (!content.trim() && source === "text")}
                   className={cn(
                     "w-full relative overflow-hidden rounded-lg px-6 py-5 text-sm font-semibold transition-all duration-300",
                     "bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground",
