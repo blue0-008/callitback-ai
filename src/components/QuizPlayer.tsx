@@ -368,7 +368,7 @@ const QuizPlayer = ({
                 transition={{ duration: 0.3, delay: 0.15 }}
                 className="space-y-4"
               >
-                <div className="glass rounded-lg p-4 border-l-2 border-primary/40">
+                <div className="glass rounded-lg p-4 ltr:border-l-2 rtl:border-r-2 border-primary/40">
                   <p className="text-xs font-semibold text-primary mb-1">Explanation</p>
                   <p className="text-xs text-foreground/75 leading-relaxed">{q.explanation}</p>
                 </div>
