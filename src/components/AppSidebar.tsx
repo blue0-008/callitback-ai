@@ -30,6 +30,7 @@ export function AppSidebar() {
   const location = useLocation();
   const { t } = useTranslation();
   const { language, setLanguage } = useUser();
+  const isRtl = language === "ar";
 
   const currentLang = LANGUAGES.find((l) => l.code === language) || LANGUAGES[0];
 

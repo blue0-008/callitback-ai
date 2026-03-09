@@ -10,6 +10,7 @@ import { useFocusMode } from "@/hooks/useFocusMode";
 import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useUser } from "@/contexts/AvatarContext";
 
 const AppLayout = () => {
   const { focusMode, toggleFocus } = useFocusMode();
