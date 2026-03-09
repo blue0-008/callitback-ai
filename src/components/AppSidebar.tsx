@@ -102,7 +102,7 @@ export function AppSidebar() {
             <PopoverTrigger asChild>
               <button
                 className={cn(
-                  "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors w-full",
+                  "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors w-full rtl:flex-row-reverse rtl:justify-between",
                   "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
                 )}
                 aria-label={t("profile.language", "Language")}
