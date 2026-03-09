@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import { Zap, ArrowRight, BookOpen, Flame } from "lucide-react";
+import UserAvatar from "@/components/UserAvatar";
 import GlassCard from "@/components/GlassCard";
 import SubjectBadge from "@/components/SubjectBadge";
 import EmptyState from "@/components/EmptyState";
