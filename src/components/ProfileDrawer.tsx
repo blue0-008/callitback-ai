@@ -42,12 +42,6 @@ function getTodaySessions(): number {
   return stats.heatmap[today] || 0;
 }
 
-function nameToColor(name: string) {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  const hue = ((hash % 360) + 360) % 360;
-  return `hsl(${hue}, 60%, 55%)`;
-}
 
 function formatJoinDate(iso: string) {
   const d = new Date(iso + "T00:00:00");
