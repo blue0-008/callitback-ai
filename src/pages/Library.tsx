@@ -32,9 +32,9 @@ type LibraryItem = {
 };
 
 const STORAGE_KEYS = {
-  summaries: "studysprint_summaries",
-  quizzes: "studysprint_quizzes",
-  decks: "studysprint_decks",
+  summaries: "callitback_summaries",
+  quizzes: "callitback_quizzes",
+  decks: "callitback_decks",
 } as const;
 
 function readStorage<T>(key: string, fallback: T): T {
