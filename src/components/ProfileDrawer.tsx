@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Pencil, Check, Trash2, RotateCcw, Download, Sun, Moon, Camera } from "lucide-react";
+import { X, Pencil, Check, Trash2, RotateCcw, Download, Sun, Moon, Camera, Globe } from "lucide-react";
 import UserAvatar from "@/components/UserAvatar";
-import { useUser } from "@/contexts/AvatarContext";
+import { useUser, type AppLanguage } from "@/contexts/AvatarContext";
 import AvatarPickerModal from "@/components/AvatarPickerModal";
 import { toast } from "@/hooks/use-toast";
 import { getStats } from "@/lib/store";
 import { Progress } from "@/components/ui/progress";
+import { useTranslation } from "react-i18next";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -43,11 +44,17 @@ function getTodaySessions(): number {
   return stats.heatmap[today] || 0;
 }
 
-
 function formatJoinDate(iso: string) {
   const d = new Date(iso + "T00:00:00");
   return d.toLocaleDateString("en-US", { month: "long", year: "numeric" });
 }
+
+const LANGUAGES: { code: AppLanguage; label: string; flag: string }[] = [
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "ar", label: "العربية", flag: "🇸🇦" },
+  { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "es", label: "Español", flag: "🇪🇸" },
+];
 
 /* ── component ────────────────────────────────── */
 
@@ -57,7 +64,8 @@ interface Props {
 }
 
 const ProfileDrawer = ({ open, onClose }: Props) => {
-  const { setAvatar, username, setUsername } = useUser();
+  const { setAvatar, username, setUsername, language, setLanguage } = useUser();
+  const { t } = useTranslation();
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(username || "User");
   const [clearOpen, setClearOpen] = useState(false);
@@ -78,7 +86,6 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
     if (editing) inputRef.current?.focus();
   }, [editing]);
 
-  // lock body scroll when open
   useEffect(() => {
     if (open) document.body.style.overflow = "hidden";
     else document.body.style.overflow = "";
@@ -111,10 +118,10 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   };
 
   const handleExport = async () => {
-    toast({ title: "Preparing your export...", description: "Generating PDF" });
+    toast({ title: t("profile.preparingExport"), description: t("profile.generatingPdf") });
     const { generateExportPdf } = await import("@/lib/exportPdf");
     await generateExportPdf();
-    toast({ title: "Export ready! Check your downloads ✅" });
+    toast({ title: t("profile.exportReady") });
   };
 
   const handleGoalChange = (n: number) => {
@@ -125,10 +132,10 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   const goalOptions = [1, 2, 3, 5];
 
   const quickStats = [
-    { emoji: "🔥", label: "Current Streak", value: `${stats.streak} days` },
-    { emoji: "🧠", label: "Quizzes Taken", value: String(stats.totalQuizzesTaken) },
-    { emoji: "🃏", label: "Cards Mastered", value: String(stats.cardsMastered) },
-    { emoji: "⚡", label: "Total Sessions", value: String(stats.totalSessions) },
+    { emoji: "🔥", label: t("profile.currentStreak"), value: `${stats.streak} ${t("profile.days")}` },
+    { emoji: "🧠", label: t("profile.quizzesTaken"), value: String(stats.totalQuizzesTaken) },
+    { emoji: "🃏", label: t("profile.cardsMastered"), value: String(stats.cardsMastered) },
+    { emoji: "⚡", label: t("profile.totalSessions"), value: String(stats.totalSessions) },
   ];
 
   return (
@@ -145,14 +152,17 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
       {/* Drawer */}
       <div
         className={cn(
-          "fixed top-0 right-0 z-50 h-full w-full sm:w-80 bg-background border-l border-border shadow-2xl flex flex-col transition-transform duration-300 ease-out",
-          open ? "translate-x-0" : "translate-x-full"
+          "fixed top-0 z-50 h-full w-full sm:w-80 bg-background border-border shadow-2xl flex flex-col transition-transform duration-300 ease-out",
+          "ltr:right-0 ltr:border-l rtl:left-0 rtl:border-r",
+          open
+            ? "translate-x-0"
+            : "ltr:translate-x-full rtl:-translate-x-full"
         )}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-3 right-3 h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors z-10"
+          className="absolute top-3 ltr:right-3 rtl:left-3 h-8 w-8 rounded-lg flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors z-10"
           aria-label="Close profile drawer"
         >
           <X className="h-4 w-4" />
@@ -192,7 +202,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
                   <button
                     onClick={() => { setEditValue(username || "User"); setEditing(true); }}
                     className="h-6 w-6 rounded flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/60 transition-colors"
-                    aria-label="Edit name"
+                    aria-label={t("profile.editName")}
                   >
                     <Pencil className="h-3 w-3" />
                   </button>
@@ -201,7 +211,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
             </div>
 
             <span className="text-xs text-muted-foreground">
-              Member since {formatJoinDate(joinDate)}
+              {t("profile.memberSince", { date: formatJoinDate(joinDate) })}
             </span>
           </div>
 
@@ -218,11 +228,10 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
 
           {/* SECTION 3 — Study Goal */}
           <div className="space-y-3">
-            <h3 className="text-sm font-heading font-semibold">Daily Study Goal 🎯</h3>
+            <h3 className="text-sm font-heading font-semibold">{t("profile.dailyGoal")}</h3>
             <Progress value={progress} className="h-2.5" />
             <p className="text-xs text-muted-foreground">
-              <span className="font-semibold text-foreground">{todaySessions}</span> of{" "}
-              <span className="font-semibold text-foreground">{goal}</span> sessions completed today
+              {t("profile.sessionsCompleted", { done: todaySessions, total: goal })}
             </p>
             <div className="flex gap-2">
               {goalOptions.map((n) => (
@@ -236,22 +245,47 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
                       : "bg-secondary/60 text-muted-foreground hover:bg-secondary hover:text-foreground"
                   )}
                 >
-                  {n}/day
+                  {t("profile.perDay", { n })}
                 </button>
               ))}
             </div>
           </div>
 
-          {/* SECTION 4 — Settings */}
+          {/* SECTION 4 — Language */}
+          <div className="space-y-2">
+            <h3 className="text-sm font-heading font-semibold flex items-center gap-2">
+              <Globe className="h-4 w-4 text-muted-foreground" />
+              {t("profile.language")}
+            </h3>
+            <div className="grid grid-cols-2 gap-2">
+              {LANGUAGES.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => setLanguage(lang.code)}
+                  className={cn(
+                    "flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-all border",
+                    language === lang.code
+                      ? "bg-primary/15 border-primary/40 text-primary"
+                      : "bg-secondary/40 border-border/40 text-muted-foreground hover:text-foreground hover:border-border"
+                  )}
+                >
+                  <span>{lang.flag}</span>
+                  <span>{lang.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* SECTION 5 — Settings */}
           <div className="space-y-1">
-            <h3 className="text-sm font-heading font-semibold mb-2">Settings</h3>
+            <h3 className="text-sm font-heading font-semibold mb-2">{t("profile.settings")}</h3>
 
             <button
               onClick={toggleTheme}
               className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground hover:bg-secondary/60 transition-colors"
             >
               {dark ? <Sun className="h-4 w-4 text-muted-foreground" /> : <Moon className="h-4 w-4 text-muted-foreground" />}
-              <span>{dark ? "Switch to Light Mode" : "Switch to Dark Mode"}</span>
+              <span>{dark ? t("profile.switchToLight") : t("profile.switchToDark")}</span>
             </button>
 
             <button
@@ -259,7 +293,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
               className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-destructive hover:bg-destructive/10 transition-colors"
             >
               <Trash2 className="h-4 w-4" />
-              <span>Clear All Data</span>
+              <span>{t("profile.clearAllData")}</span>
             </button>
 
             <button
@@ -267,7 +301,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
               className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground hover:bg-secondary/60 transition-colors"
             >
               <RotateCcw className="h-4 w-4 text-muted-foreground" />
-              <span>Reset Onboarding</span>
+              <span>{t("profile.resetOnboarding")}</span>
             </button>
 
             <button
@@ -275,7 +309,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
               className="w-full flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm text-foreground hover:bg-secondary/60 transition-colors"
             >
               <Download className="h-4 w-4 text-muted-foreground" />
-              <span>Export My Data</span>
+              <span>{t("profile.exportMyData")}</span>
             </button>
           </div>
         </div>
@@ -285,15 +319,15 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
       <AlertDialog open={clearOpen} onOpenChange={setClearOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Clear all data?</AlertDialogTitle>
+            <AlertDialogTitle>{t("profile.clearConfirmTitle")}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will delete all your summaries, quizzes and flashcards. Are you sure?
+              {t("profile.clearConfirmDesc")}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel>{t("profile.cancel")}</AlertDialogCancel>
             <AlertDialogAction onClick={handleClearAll} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              Yes, clear everything
+              {t("profile.yesClear")}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
