@@ -7,7 +7,6 @@ import {
   completeOnboarding,
   setPreferredMethods,
   setUserName,
-  setUserSubjects,
 } from "@/lib/userPrefs";
 
 /* ── Confetti (reuse pattern from QuizPlayer) ──── */
