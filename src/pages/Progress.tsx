@@ -167,7 +167,7 @@ const Progress = () => {
               ))}
             </div>
           </div>
-          <div className="flex items-center gap-2 text-[9px] text-muted-foreground/50">
+          <div className="flex items-center gap-2 text-[9px] text-muted-foreground/50 rtl:flex-row-reverse">
             <span>Less</span>
             {[0, 1, 2, 4].map((c) => (
               <div key={c} className={cn("w-[10px] h-[10px] rounded-sm", heatColor(c))} />
