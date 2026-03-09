@@ -1,5 +1,4 @@
 const AVATAR_KEY = "studysprint_avatar";
-const NAME_KEY = "studysprint_userName";
 
 export function getAvatarUrl(): string | null {
   return localStorage.getItem(AVATAR_KEY);
@@ -13,6 +12,13 @@ export function clearAvatarUrl() {
   localStorage.removeItem(AVATAR_KEY);
 }
 
+function getStoredName(): string {
+  // Check both possible keys
+  return localStorage.getItem("studysprint_userName")
+    || localStorage.getItem("studysprint_username")
+    || "";
+}
+
 interface UserAvatarProps {
   size?: number;
   className?: string;
@@ -20,34 +26,36 @@ interface UserAvatarProps {
 
 const UserAvatar = ({ size = 36, className }: UserAvatarProps) => {
   const avatar = localStorage.getItem(AVATAR_KEY);
-  const name = localStorage.getItem(NAME_KEY);
-  const initial = name ? name.charAt(0).toUpperCase() : "⚡";
-  const fontSize = Math.max(Math.round(size * 0.42), 12);
-
-  const containerStyle: React.CSSProperties = {
-    width: size,
-    height: size,
-    minWidth: size,
-    minHeight: size,
-  };
+  const name = getStoredName();
+  const initial = name ? name.charAt(0).toUpperCase() : "?";
+  const fontSize = Math.max(Math.round(size * 0.44), 12);
 
   if (avatar) {
     return (
-      <div style={containerStyle} className={className}>
-        <img
-          src={avatar}
-          alt="avatar"
-          className="rounded-full w-full h-full object-cover"
-          style={{ width: size, height: size }}
-        />
-      </div>
+      <img
+        src={avatar}
+        alt="avatar"
+        className={className}
+        style={{
+          width: size,
+          height: size,
+          minWidth: size,
+          minHeight: size,
+          borderRadius: "50%",
+          objectFit: "cover",
+        }}
+      />
     );
   }
 
   return (
     <div
+      className={className}
       style={{
-        ...containerStyle,
+        width: size,
+        height: size,
+        minWidth: size,
+        minHeight: size,
         backgroundColor: "#F59E0B",
         color: "#0F1117",
         borderRadius: "50%",
@@ -56,8 +64,8 @@ const UserAvatar = ({ size = 36, className }: UserAvatarProps) => {
         justifyContent: "center",
         fontWeight: 700,
         fontSize,
+        lineHeight: 1,
       }}
-      className={className}
     >
       {initial}
     </div>
