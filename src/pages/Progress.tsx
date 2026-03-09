@@ -49,7 +49,7 @@ function buildHeatmapWeeks(heatmap: Record<string, number>): number[][] {
 }
 
 const SUBJECT_COLORS = [
-  "hsl(239, 84%, 67%)",
+  "hsl(38, 92%, 50%)",
   "hsl(38, 92%, 50%)",
   "hsl(142, 71%, 45%)",
   "hsl(25, 95%, 53%)",
