@@ -67,6 +67,11 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   const [goal, setGoal] = useState(getDailyGoal());
   const inputRef = useRef<HTMLInputElement>(null);
 
+  const stats = getStats();
+  const todaySessions = getTodaySessions();
+  const joinDate = getJoinDate();
+  const progress = Math.min((todaySessions / goal) * 100, 100);
+
   const handleAvatarSave = (url: string) => {
     setAvatar(url);
   };
