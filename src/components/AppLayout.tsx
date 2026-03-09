@@ -53,10 +53,10 @@ const AppLayout = () => {
               </button>
               <button
                 onClick={() => setDrawerOpen(true)}
-                className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary hover:bg-primary/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Open profile"
               >
-                {initial}
+                <UserAvatar size={32} />
               </button>
             </div>
           </header>
