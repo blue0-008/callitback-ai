@@ -78,7 +78,7 @@ export function AppSidebar() {
                         <span className="relative shrink-0">
                           <item.icon className={`h-4 w-4 transition-colors ${active ? "text-primary" : ""}`} />
                           {item.badge > 0 && (
-                            <span className="absolute -top-1.5 -right-1.5 min-w-[14px] h-[14px] flex items-center justify-center rounded-full bg-accent text-accent-foreground text-[9px] font-bold px-0.5">
+                            <span className="absolute -top-1.5 ltr:-right-1.5 rtl:-left-1.5 min-w-[14px] h-[14px] flex items-center justify-center rounded-full bg-accent text-accent-foreground text-[9px] font-bold px-0.5">
                               {item.badge}
                             </span>
                           )}
