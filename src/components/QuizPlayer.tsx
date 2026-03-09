@@ -237,7 +237,7 @@ const QuizPlayer = ({
             onClick={onExit}
             className="w-full flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-xs font-semibold bg-secondary/60 border border-border/40 text-foreground hover:bg-secondary transition-all"
           >
-            <ArrowRight className="h-3.5 w-3.5" /> New Quiz
+            <ArrowRight className="h-3.5 w-3.5 rtl:rotate-180" /> New Quiz
           </button>
           <button
             onClick={onExit}
