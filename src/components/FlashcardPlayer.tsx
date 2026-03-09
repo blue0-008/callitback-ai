@@ -368,9 +368,9 @@ const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit }: FlashcardPl
         onTouchEnd={handleTouchEnd}
       >
         {/* Top bar */}
-        <div className="flex items-center justify-between">
-          <button onClick={onExit} className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1">
-            <ChevronLeft className="h-3 w-3" /> Back
+        <div className="flex items-center justify-between rtl:flex-row-reverse">
+          <button onClick={onExit} className="text-xs text-muted-foreground hover:text-foreground transition-colors flex items-center gap-1 rtl:flex-row-reverse">
+            <ChevronLeft className="h-3 w-3 rtl:rotate-180" /> Back
           </button>
           <span className="text-xs text-muted-foreground font-medium">
             Card {current + 1} of {total}
