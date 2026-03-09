@@ -6,23 +6,11 @@ import { cn } from "@/lib/utils";
 
 const BASE = "https://api.dicebear.com/7.x/adventurer/svg?backgroundColor=ffffff&seed=";
 
-const ROWS = [
-  {
-    label: "Girls, Light Tones",
-    seeds: ["Luna", "Zara", "Nova", "Mia", "Aria", "Stella"],
-  },
-  {
-    label: "Girls, Deep Tones",
-    seeds: ["Amara", "Zuri", "Imani", "Nadia", "Layla", "Sana"],
-  },
-  {
-    label: "Boys, Light Tones",
-    seeds: ["Kai", "Leo", "Max", "Finn", "Jake", "Ryan"],
-  },
-  {
-    label: "Boys, Deep Tones",
-    seeds: ["Kofi", "Malik", "Andre", "Omar", "Jalen", "Theo"],
-  },
+const SEEDS = [
+  "Luna", "Zara", "Nova", "Mia", "Aria", "Stella",
+  "Amara", "Zuri", "Imani", "Nadia", "Layla", "Sana",
+  "Kai", "Leo", "Max", "Finn", "Jake", "Ryan",
+  "Kofi", "Malik", "Andre", "Omar", "Jalen", "Theo",
 ];
 
 interface Props {
