@@ -386,7 +386,7 @@ const QuizPlayer = ({
                     </>
                   ) : (
                     <>
-                      Next Question <ArrowRight className="h-4 w-4" />
+                      Next Question <ArrowRight className="h-4 w-4 rtl:rotate-180" />
                     </>
                   )}
                 </button>

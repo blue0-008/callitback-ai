@@ -290,7 +290,7 @@ const Library = () => {
           <DialogHeader>
             <DialogTitle>{viewingSummary?.title}</DialogTitle>
           </DialogHeader>
-          <div className="overflow-y-auto pr-1 text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+          <div className="overflow-y-auto ltr:pr-1 rtl:pl-1 text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
             {viewingSummary?.summaryContent}
           </div>
         </DialogContent>

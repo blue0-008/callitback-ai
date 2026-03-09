@@ -440,20 +440,20 @@ const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit }: FlashcardPl
         </div>
 
         {/* Nav arrows */}
-        <div className="flex justify-center gap-4">
+        <div className="flex justify-center gap-4 rtl:flex-row-reverse">
           <button
             onClick={() => goTo(current - 1)}
             disabled={current === 0}
             className="p-2 rounded-lg hover:bg-secondary/60 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30"
           >
-            <ChevronLeft className="h-4 w-4" />
+            <ChevronLeft className="h-4 w-4 rtl:rotate-180" />
           </button>
           <button
             onClick={() => goTo(current + 1)}
             disabled={current === total - 1}
             className="p-2 rounded-lg hover:bg-secondary/60 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-30"
           >
-            <ChevronRight className="h-4 w-4" />
+            <ChevronRight className="h-4 w-4 rtl:rotate-180" />
           </button>
         </div>
       </div>

@@ -239,7 +239,7 @@ const Progress = () => {
                   <div key={s.name} className="flex items-center gap-2 text-xs">
                     <span className="w-2.5 h-2.5 rounded-sm shrink-0" style={{ background: s.color }} />
                     <span className="text-foreground/80">{s.name}</span>
-                    <span className="ml-auto text-muted-foreground">{totalSubjectTime > 0 ? Math.round((s.value / totalSubjectTime) * 100) : 0}%</span>
+                    <span className="ltr:ml-auto rtl:mr-auto text-muted-foreground">{totalSubjectTime > 0 ? Math.round((s.value / totalSubjectTime) * 100) : 0}%</span>
                   </div>
                 ))}
               </div>
