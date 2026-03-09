@@ -169,7 +169,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
               className="relative group cursor-pointer rounded-full"
               aria-label="Change avatar"
             >
-              <UserAvatar key={avatarKey} size={80} className="shadow-lg group-hover:opacity-80 transition-opacity" />
+              <UserAvatar size={80} className="shadow-lg group-hover:opacity-80 transition-opacity" />
               <div className="absolute inset-0 rounded-full flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
                 <Camera className="h-5 w-5 text-white" />
               </div>
