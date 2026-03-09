@@ -58,10 +58,9 @@ interface Props {
 }
 
 const ProfileDrawer = ({ open, onClose }: Props) => {
-  const { setAvatar } = useAvatar();
-  const [name, setName] = useState(getUserName() || "User");
+  const { setAvatar, username, setUsername } = useUser();
   const [editing, setEditing] = useState(false);
-  const [editValue, setEditValue] = useState(name);
+  const [editValue, setEditValue] = useState(username || "User");
   const [clearOpen, setClearOpen] = useState(false);
   const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const [goal, setGoal] = useState(getDailyGoal());
