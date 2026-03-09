@@ -242,7 +242,7 @@
     "focusTime": "Tiempo de enfoque",
     "breakTime": "Tiempo de descanso",
     "sessionComplete": "🎉 ¡Sesión completada! Es hora del descanso.",
-    "breakOver": "☕ ¡Descanso terminado! ¿Listo para otro sprint?"
+    "breakOver": "☕ ¡Descanso terminado! ¿Listo para otra sesión?"
   },
   "summary": {
     "tldr": "Resumen",

@@ -242,7 +242,7 @@
     "focusTime": "Temps de focus",
     "breakTime": "Temps de pause",
     "sessionComplete": "🎉 Session terminée ! C'est l'heure de la pause.",
-    "breakOver": "☕ Pause terminée ! Prêt pour un autre sprint ?"
+    "breakOver": "☕ Pause terminée ! Prêt pour une autre session ?"
   },
   "summary": {
     "tldr": "Résumé",
