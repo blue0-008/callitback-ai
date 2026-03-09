@@ -132,37 +132,32 @@ const AvatarPickerModal = ({ open, onClose, onSave }: Props) => {
             <div className="flex-1 border-t border-border/50" />
           </div>
 
-          {/* Avatar rows */}
-          {ROWS.map((row) => (
-            <div key={row.label}>
-              <p className="text-xs font-medium text-muted-foreground mb-2">{row.label}</p>
-              <div className="grid grid-cols-6 gap-2">
-                {row.seeds.map((seed) => {
-                  const url = BASE + seed;
-                  const isSelected = selected === url && !uploadPreview;
-                  return (
-                    <button
-                      key={seed}
-                      onClick={() => selectAvatar(url)}
-                      className={cn(
-                        "relative rounded-full overflow-hidden border-2 transition-all duration-200 bg-secondary aspect-square",
-                        isSelected
-                          ? "border-primary shadow-[0_0_12px_hsl(38_92%_50%/0.4)] scale-105"
-                          : "border-transparent hover:border-primary/40 hover:shadow-[0_0_8px_hsl(38_92%_50%/0.2)]"
-                      )}
-                    >
-                      <img src={url} alt="" className="w-full h-full object-cover" loading="lazy" />
-                      {isSelected && (
-                        <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
-                          <Check className="h-5 w-5 text-primary drop-shadow" />
-                        </div>
-                      )}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+          {/* Avatar grid */}
+          <div className="grid grid-cols-4 sm:grid-cols-6 gap-2">
+            {SEEDS.map((seed) => {
+              const url = BASE + seed;
+              const isSelected = selected === url && !uploadPreview;
+              return (
+                <button
+                  key={seed}
+                  onClick={() => selectAvatar(url)}
+                  className={cn(
+                    "relative rounded-full overflow-hidden border-2 transition-all duration-200 bg-secondary aspect-square",
+                    isSelected
+                      ? "border-primary shadow-[0_0_12px_hsl(38_92%_50%/0.4)] scale-105"
+                      : "border-transparent hover:border-primary/40 hover:shadow-[0_0_8px_hsl(38_92%_50%/0.2)]"
+                  )}
+                >
+                  <img src={url} alt={seed} className="w-full h-full object-cover" loading="lazy" />
+                  {isSelected && (
+                    <div className="absolute inset-0 bg-primary/20 flex items-center justify-center">
+                      <Check className="h-5 w-5 text-primary drop-shadow" />
+                    </div>
+                  )}
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Sticky save button */}
