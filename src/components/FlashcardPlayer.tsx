@@ -184,11 +184,10 @@ const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit, onComplete }:
 
   const markMastery = useCallback(
     (level: Mastery) => {
-      setMasteryMap((prev) => {
-        const next = new Map(prev);
-        next.set(card.id, level);
-        return next;
-      });
+      const newMap = new Map(masteryMap);
+      newMap.set(card.id, level);
+      setMasteryMap(newMap);
+      
       // Advance
       if (current < total - 1) {
         setDirection(1);
@@ -196,9 +195,12 @@ const FlashcardPlayer = ({ deckTitle, cards: initialCards, onExit, onComplete }:
         setFlipped(false);
       } else {
         setCompleted(true);
+        // Calculate and report mastery stats
+        const gotItCount = Array.from(newMap.values()).filter((m) => m === "got-it").length;
+        onComplete?.(gotItCount, total);
       }
     },
-    [card, current, total]
+    [card, current, total, masteryMap, onComplete]
   );
 
   const handleShuffle = useCallback(() => {
