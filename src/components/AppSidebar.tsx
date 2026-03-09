@@ -16,10 +16,9 @@ import {
 const navItems = [
   { title: "Dashboard", url: "/dashboard", icon: LayoutDashboard, badge: 0 },
   { title: "Study", url: "/study", icon: BookOpen, badge: 0 },
-  { title: "Summaries", url: "/summaries", icon: FileText, badge: 0 },
+  { title: "Library", url: "/library", icon: Library, badge: 0 },
   { title: "Quiz", url: "/quiz", icon: HelpCircle, badge: 0 },
   { title: "Flashcards", url: "/flashcards", icon: Layers, badge: getDueToday() },
-  { title: "Progress", url: "/progress", icon: BarChart3, badge: 0 },
 ];
 
 export function AppSidebar() {
