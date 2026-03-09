@@ -265,7 +265,7 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
                   className={cn(
                     "flex items-center gap-2 rounded-lg px-3 py-2 text-xs font-medium transition-all border",
                     language === lang.code
-                      ? "bg-primary/15 border-primary/40 text-primary"
+                      ? "bg-amber-500/15 border-amber-500/40 text-amber-600 dark:text-amber-400"
                       : "bg-secondary/40 border-border/40 text-muted-foreground hover:text-foreground hover:border-border"
                   )}
                 >

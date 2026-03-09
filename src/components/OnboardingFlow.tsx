@@ -7,9 +7,10 @@ import {
   completeOnboarding,
   setPreferredMethods,
 } from "@/lib/userPrefs";
-import { useUser } from "@/contexts/AvatarContext";
+import { useUser, type AppLanguage } from "@/contexts/AvatarContext";
+import { useTranslation } from "react-i18next";
 
-/* ── Confetti (reuse pattern from QuizPlayer) ──── */
+/* ── Confetti ──────────────────────────────────── */
 
 function spawnConfetti(container: HTMLDivElement) {
   const colors = ["#6366F1", "#F59E0B", "#10B981", "#EC4899", "#3B82F6"];
@@ -45,6 +46,23 @@ function spawnConfetti(container: HTMLDivElement) {
   }
 }
 
+/* ── Language data ─────────────────────────────── */
+
+const LANGUAGES: { code: AppLanguage; flag: string; native: string; english: string }[] = [
+  { code: "en", flag: "🇬🇧", native: "English", english: "English" },
+  { code: "ar", flag: "🇸🇦", native: "العربية", english: "Arabic" },
+  { code: "fr", flag: "🇫🇷", native: "Français", english: "French" },
+  { code: "es", flag: "🇪🇸", native: "Español", english: "Spanish" },
+];
+
+function detectBrowserLanguage(): AppLanguage {
+  const lang = navigator.language?.slice(0, 2)?.toLowerCase();
+  if (lang === "ar") return "ar";
+  if (lang === "fr") return "fr";
+  if (lang === "es") return "es";
+  return "en";
+}
+
 /* ── Subject data ──────────────────────────────── */
 
 const ALL_SUBJECTS = [
@@ -65,24 +83,9 @@ const ALL_SUBJECTS = [
 ];
 
 const STUDY_STYLES = [
-  {
-    key: "quiz",
-    emoji: "🧠",
-    label: "Quizzes",
-    desc: "Test yourself until it sticks",
-  },
-  {
-    key: "flashcards",
-    emoji: "🃏",
-    label: "Flashcards",
-    desc: "Flip through key concepts",
-  },
-  {
-    key: "summaries",
-    emoji: "📋",
-    label: "Summaries",
-    desc: "Read the key points fast",
-  },
+  { key: "quiz", emoji: "🧠", label: "Quizzes", desc: "Test yourself until it sticks" },
+  { key: "flashcards", emoji: "🃏", label: "Flashcards", desc: "Flip through key concepts" },
+  { key: "summaries", emoji: "📋", label: "Summaries", desc: "Read the key points fast" },
 ] as const;
 
 const TIPS = [
@@ -115,15 +118,9 @@ const StepDots = ({ total, current }: { total: number; current: number }) => (
 /* ── Slide variants ────────────────────────────── */
 
 const slideVariants = {
-  enter: (dir: number) => ({
-    x: dir > 0 ? 80 : -80,
-    opacity: 0,
-  }),
+  enter: (dir: number) => ({ x: dir > 0 ? 80 : -80, opacity: 0 }),
   center: { x: 0, opacity: 1 },
-  exit: (dir: number) => ({
-    x: dir > 0 ? -80 : 80,
-    opacity: 0,
-  }),
+  exit: (dir: number) => ({ x: dir > 0 ? -80 : 80, opacity: 0 }),
 };
 
 /* ── Main Component ────────────────────────────── */
@@ -134,15 +131,25 @@ interface OnboardingFlowProps {
 
 const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const navigate = useNavigate();
-  const { setUsername: setContextUsername } = useUser();
+  const { setUsername: setContextUsername, setLanguage, language } = useUser();
+  const { t } = useTranslation();
   const [step, setStep] = useState(0);
   const [direction, setDirection] = useState(1);
   const [name, setName] = useState("");
   const [preferredMethods, setPreferredMethodsState] = useState<Set<string>>(new Set());
+  const [selectedLang, setSelectedLang] = useState<AppLanguage | null>(null);
   const confettiRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const TOTAL_STEPS = 4;
+  const TOTAL_STEPS = 5;
+
+  // Auto-detect browser language on mount
+  useEffect(() => {
+    const detected = detectBrowserLanguage();
+    setSelectedLang(detected);
+    setLanguage(detected);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const next = useCallback(() => {
     setDirection(1);
@@ -176,16 +183,21 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
     });
   }, []);
 
-  // Focus input on step 1
+  const handleLangSelect = (lang: AppLanguage) => {
+    setSelectedLang(lang);
+    setLanguage(lang);
+  };
+
+  // Focus input on step 2 (name step)
   useEffect(() => {
-    if (step === 1) {
+    if (step === 2) {
       setTimeout(() => inputRef.current?.focus(), 300);
     }
   }, [step]);
 
   // Confetti on final step
   useEffect(() => {
-    if (step === 3 && confettiRef.current) {
+    if (step === 4 && confettiRef.current) {
       setTimeout(() => {
         if (confettiRef.current) {
           for (let burst = 0; burst < 3; burst++) {
@@ -210,38 +222,109 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       className="fixed inset-0 z-50 bg-background flex flex-col items-center justify-center p-4"
       ref={confettiRef}
     >
-      {/* Subtle background gradient */}
       <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-accent/5 pointer-events-none" />
 
-      {/* Step dots (hidden on step 0) */}
-      {step > 0 && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="absolute top-8 left-1/2 -translate-x-1/2"
-        >
-          <StepDots total={TOTAL_STEPS} current={step} />
-        </motion.div>
-      )}
+      {/* Step dots */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="absolute top-8 left-1/2 -translate-x-1/2"
+      >
+        <StepDots total={TOTAL_STEPS} current={step} />
+      </motion.div>
 
       {/* Back button */}
-      {step >= 2 && step <= 3 && (
+      {step >= 1 && step <= 4 && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           onClick={back}
-          className="absolute top-8 left-6 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+          className="absolute top-8 ltr:left-6 rtl:right-6 flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
           aria-label="Go back"
         >
-          <ChevronLeft className="h-4 w-4" /> Back
+          <ChevronLeft className="h-4 w-4 rtl:rotate-180" /> {t("onboarding.back", "Back")}
         </motion.button>
       )}
 
-      {/* Steps */}
       <div className="relative w-full max-w-lg">
         <AnimatePresence mode="wait" custom={direction}>
-          {/* STEP 0 — Welcome */}
+          {/* STEP 0 — Language Selection */}
           {step === 0 && (
+            <motion.div
+              key="step-lang"
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ duration: 0.35, ease: "easeOut" }}
+              className="flex flex-col items-center text-center space-y-8"
+            >
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.15, duration: 0.4 }}
+                className="space-y-3"
+              >
+                <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight leading-relaxed">
+                  Choose your language
+                  <br />
+                  <span className="text-muted-foreground text-lg">
+                    اختر لغتك · Choisissez votre langue · Elige tu idioma
+                  </span>
+                </h1>
+              </motion.div>
+
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.3, duration: 0.4 }}
+                className="grid grid-cols-2 gap-3 w-full max-w-sm"
+              >
+                {LANGUAGES.map((lang) => {
+                  const isSelected = selectedLang === lang.code;
+                  return (
+                    <button
+                      key={lang.code}
+                      onClick={() => handleLangSelect(lang.code)}
+                      className={cn(
+                        "glass rounded-xl p-5 text-center border transition-all duration-200 space-y-1.5 relative",
+                        isSelected
+                          ? "border-primary/60 bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.2)]"
+                          : "border-border/30 hover:border-border/60 hover:bg-secondary/30"
+                      )}
+                    >
+                      {isSelected && (
+                        <span className="absolute top-2 ltr:right-2 rtl:left-2 h-5 w-5 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                          <Check className="h-3 w-3" />
+                        </span>
+                      )}
+                      <span className="text-3xl block">{lang.flag}</span>
+                      <p className="text-sm font-semibold">{lang.native}</p>
+                      <p className="text-[10px] text-muted-foreground">{lang.english}</p>
+                    </button>
+                  );
+                })}
+              </motion.div>
+
+              <AnimatePresence>
+                {selectedLang && (
+                  <motion.button
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 8 }}
+                    onClick={next}
+                    className="flex items-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(var(--primary)/0.3)] hover:scale-[1.01]"
+                  >
+                    {t("onboarding.continue", "Continue →")}
+                  </motion.button>
+                )}
+              </AnimatePresence>
+            </motion.div>
+          )}
+
+          {/* STEP 1 — Welcome */}
+          {step === 1 && (
             <motion.div
               key="step0"
               custom={direction}
@@ -268,10 +351,10 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 className="space-y-3"
               >
                 <h1 className="text-3xl sm:text-4xl font-heading font-bold tracking-tight">
-                  Welcome to <span className="text-primary glow-text">StudySprint AI</span>
+                  {t("onboarding.welcomeTitle", "Welcome to")} <span className="text-primary glow-text">StudySprint AI</span>
                 </h1>
                 <p className="text-muted-foreground text-sm max-w-sm mx-auto">
-                  The smartest way to study anything. Let's get you set up in 30 seconds.
+                  {t("onboarding.welcomeDesc", "The smartest way to study anything. Let's get you set up in 30 seconds.")}
                 </p>
               </motion.div>
 
@@ -279,13 +362,12 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.7, duration: 0.3 }}
-                className="space-y-3"
               >
                 <button
                   onClick={next}
-                  className="flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_40px_hsl(38_92%_50%/0.35)] hover:scale-[1.02]"
+                  className="flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_40px_hsl(var(--primary)/0.35)] hover:scale-[1.02]"
                 >
-                  Let's Go →
+                  {t("onboarding.letsGo", "Let's Go →")}
                 </button>
               </motion.div>
 
@@ -294,15 +376,15 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1, duration: 0.3 }}
                 onClick={skip}
-                className="absolute bottom-4 right-4 text-[11px] text-muted-foreground/50 hover:text-muted-foreground transition-colors"
+                className="absolute bottom-4 ltr:right-4 rtl:left-4 text-[11px] text-muted-foreground/50 hover:text-muted-foreground transition-colors"
               >
-                Skip for now
+                {t("onboarding.skip", "Skip for now")}
               </motion.button>
             </motion.div>
           )}
 
-          {/* STEP 1 — Name */}
-          {step === 1 && (
+          {/* STEP 2 — Name */}
+          {step === 2 && (
             <motion.div
               key="step1"
               custom={direction}
@@ -315,8 +397,8 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
             >
               <div className="glass rounded-2xl p-8 sm:p-10 w-full max-w-md space-y-6">
                 <div className="space-y-2">
-                  <h2 className="text-xl font-heading font-bold">What should we call you?</h2>
-                  <p className="text-xs text-muted-foreground">We'll personalize your dashboard</p>
+                  <h2 className="text-xl font-heading font-bold">{t("onboarding.nameTitle", "What should we call you?")}</h2>
+                  <p className="text-xs text-muted-foreground">{t("onboarding.nameDesc", "We'll personalize your dashboard")}</p>
                 </div>
 
                 <input
@@ -325,16 +407,16 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && next()}
-                  placeholder="e.g. Alex"
+                  placeholder={t("onboarding.namePlaceholder", "e.g. Alex")}
                   className="w-full bg-secondary/60 border border-border/50 rounded-xl px-4 py-3 text-sm text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 transition-colors text-center"
                   maxLength={30}
                 />
 
                 <button
                   onClick={next}
-                  className="w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(38_92%_50%/0.3)] hover:scale-[1.01]"
+                  className="w-full flex items-center justify-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(var(--primary)/0.3)] hover:scale-[1.01]"
                 >
-                  Continue →
+                  {t("onboarding.continue", "Continue →")}
                 </button>
               </div>
 
@@ -342,13 +424,13 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 onClick={skip}
                 className="text-[11px] text-muted-foreground/50 hover:text-muted-foreground transition-colors"
               >
-                Skip for now
+                {t("onboarding.skip", "Skip for now")}
               </button>
             </motion.div>
           )}
 
-          {/* STEP 2 — Study style */}
-          {step === 2 && (
+          {/* STEP 3 — Study style */}
+          {step === 3 && (
             <motion.div
               key="step2"
               custom={direction}
@@ -360,9 +442,9 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               className="flex flex-col items-center text-center space-y-6"
             >
               <div className="space-y-2">
-                <h2 className="text-xl font-heading font-bold">What's your go-to study style?</h2>
+                <h2 className="text-xl font-heading font-bold">{t("onboarding.styleTitle", "What's your go-to study style?")}</h2>
                 <p className="text-xs text-muted-foreground">
-                  Pick as many as you like — you can always change this later
+                  {t("onboarding.styleDesc", "Pick as many as you like — you can always change this later")}
                 </p>
               </div>
 
@@ -376,13 +458,13 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                       className={cn(
                         "glass rounded-xl p-5 text-center border transition-all duration-200 space-y-2 relative",
                         selected
-                          ? "border-primary/60 bg-primary/10 shadow-[0_0_20px_hsl(38_92%_50%/0.2)]"
+                          ? "border-primary/60 bg-primary/10 shadow-[0_0_20px_hsl(var(--primary)/0.2)]"
                           : "border-border/30 hover:border-border/60 hover:bg-secondary/30"
                       )}
                       aria-pressed={selected}
                     >
                       {selected && (
-                        <span className="absolute top-3 right-3 h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
+                        <span className="absolute top-3 ltr:right-3 rtl:left-3 h-6 w-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center">
                           <Check className="h-4 w-4" />
                         </span>
                       )}
@@ -402,17 +484,17 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                     exit={{ opacity: 0, y: 8 }}
                     transition={{ duration: 0.25, ease: "easeOut" }}
                     onClick={next}
-                    className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(38_92%_50%/0.3)] hover:scale-[1.01]"
+                    className="flex items-center justify-center gap-2 rounded-xl px-8 py-3 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(var(--primary)/0.3)] hover:scale-[1.01]"
                   >
-                    Continue →
+                    {t("onboarding.continue", "Continue →")}
                   </motion.button>
                 )}
               </AnimatePresence>
             </motion.div>
           )}
 
-          {/* STEP 3 — All set! */}
-          {step === 3 && (
+          {/* STEP 4 — All set! */}
+          {step === 4 && (
             <motion.div
               key="step4"
               custom={direction}
@@ -423,14 +505,13 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
               transition={{ duration: 0.35, ease: "easeOut" }}
               className="flex flex-col items-center text-center space-y-6"
             >
-              {/* Avatar with initial */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.5, ease: [0.34, 1.56, 0.64, 1], delay: 0.2 }}
                 className="relative"
               >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center text-3xl font-heading font-bold text-foreground shadow-[0_0_40px_hsl(38_92%_50%/0.25)]">
+                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 flex items-center justify-center text-3xl font-heading font-bold text-foreground shadow-[0_0_40px_hsl(var(--primary)/0.25)]">
                   {initial}
                 </div>
                 <motion.div
@@ -447,10 +528,10 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 className="space-y-2"
               >
                 <h2 className="text-2xl font-heading font-bold">
-                  You're ready, {displayName}! ⚡
+                  {t("onboarding.readyTitle", { name: displayName, defaultValue: `You're ready, ${displayName}! ⚡` })}
                 </h2>
                 <p className="text-sm text-muted-foreground">
-                  Your study space is set up. Time to sprint.
+                  {t("onboarding.readyDesc", "Your study space is set up. Time to sprint.")}
                 </p>
               </motion.div>
 
@@ -459,12 +540,11 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
                 onClick={finish}
-                className="flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_40px_hsl(38_92%_50%/0.35)] hover:scale-[1.02]"
+                className="flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_40px_hsl(var(--primary)/0.35)] hover:scale-[1.02]"
               >
-                <Zap className="h-4 w-4" /> Start Studying →
+                <Zap className="h-4 w-4" /> {t("onboarding.startStudying", "Start Studying →")}
               </motion.button>
 
-              {/* Tips */}
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
