@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { X, Pencil, Check, Trash2, RotateCcw, Download, Sun, Moon, Camera } from "lucide-react";
-import UserAvatar, { getAvatarUrl, setAvatarUrl } from "@/components/UserAvatar";
+import UserAvatar, { setAvatarUrl } from "@/components/UserAvatar";
+import AvatarPickerModal from "@/components/AvatarPickerModal";
 import { toast } from "@/hooks/use-toast";
 import { getUserName, setUserName } from "@/lib/userPrefs";
 import { getStats } from "@/lib/store";
@@ -60,26 +61,19 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   const [editing, setEditing] = useState(false);
   const [editValue, setEditValue] = useState(name);
   const [clearOpen, setClearOpen] = useState(false);
+  const [avatarPickerOpen, setAvatarPickerOpen] = useState(false);
   const [goal, setGoal] = useState(getDailyGoal());
-  const [avatarKey, setAvatarKey] = useState(0); // force re-render on avatar change
+  const [avatarKey, setAvatarKey] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const stats = getStats();
   const todaySessions = getTodaySessions();
   const joinDate = getJoinDate();
   const progress = Math.min((todaySessions / goal) * 100, 100);
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result as string;
-      setAvatarUrl(base64);
-      setAvatarKey((k) => k + 1);
-    };
-    reader.readAsDataURL(file);
+  const handleAvatarSave = (url: string) => {
+    setAvatarUrl(url);
+    setAvatarKey((k) => k + 1);
   };
 
   useEffect(() => {
@@ -170,23 +164,16 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
         <div className="flex-1 overflow-y-auto p-5 space-y-6">
           {/* SECTION 1 — Profile Header */}
           <div className="flex flex-col items-center pt-4 space-y-2">
-            <div className="relative">
-              <UserAvatar key={avatarKey} size={80} className="shadow-lg" />
-              <button
-                onClick={() => fileInputRef.current?.click()}
-                className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-secondary border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
-                aria-label="Change photo"
-              >
-                <Camera className="h-3.5 w-3.5" />
-              </button>
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/jpeg,image/png,image/webp"
-                className="hidden"
-                onChange={handlePhotoUpload}
-              />
-            </div>
+            <button
+              onClick={() => setAvatarPickerOpen(true)}
+              className="relative group cursor-pointer rounded-full"
+              aria-label="Change avatar"
+            >
+              <UserAvatar key={avatarKey} size={80} className="shadow-lg group-hover:opacity-80 transition-opacity" />
+              <div className="absolute inset-0 rounded-full flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                <Camera className="h-5 w-5 text-white" />
+              </div>
+            </button>
 
             <div className="flex items-center gap-1.5">
               {editing ? (
@@ -314,6 +301,12 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <AvatarPickerModal
+        open={avatarPickerOpen}
+        onClose={() => setAvatarPickerOpen(false)}
+        onSave={handleAvatarSave}
+      />
     </>
   );
 };
