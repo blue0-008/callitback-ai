@@ -590,7 +590,7 @@ const Study = () => {
                     </div>
                     <button
                       onClick={() => navigate(`/quiz?id=${output.quizId}`)}
-                      className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(239_84%_67%/0.3)] hover:scale-[1.01] transition-all"
+                      className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(38_92%_50%/0.3)] hover:scale-[1.01] transition-all"
                     >
                       Start Now <ArrowRight className="h-4 w-4" />
                     </button>

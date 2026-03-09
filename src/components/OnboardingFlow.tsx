@@ -458,7 +458,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.6 }}
                 onClick={finish}
-                className="flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_40px_hsl(239_84%_67%/0.35)] hover:scale-[1.02]"
+                className="flex items-center gap-2 rounded-xl px-8 py-3.5 text-sm font-semibold transition-all duration-300 bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_40px_hsl(38_92%_50%/0.35)] hover:scale-[1.02]"
               >
                 <Zap className="h-4 w-4" /> Start Studying →
               </motion.button>
