@@ -1,10 +1,12 @@
+import { useState } from "react";
 import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import { AppSidebar } from "@/components/AppSidebar";
 import { MobileTabBar } from "@/components/MobileTabBar";
 import AnimatedOutlet from "@/components/AnimatedOutlet";
 import PomodoroTimer from "@/components/PomodoroTimer";
-import ProfileDropdown from "@/components/ProfileDropdown";
+import ProfileDrawer from "@/components/ProfileDrawer";
 import { useFocusMode } from "@/hooks/useFocusMode";
+import { getUserName } from "@/lib/userPrefs";
 import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -12,6 +14,9 @@ import { useIsMobile } from "@/hooks/use-mobile";
 const AppLayout = () => {
   const { focusMode, toggleFocus } = useFocusMode();
   const isMobile = useIsMobile();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const displayName = getUserName() || "User";
+  const initial = displayName.charAt(0).toUpperCase();
 
   return (
     <SidebarProvider>
@@ -48,7 +53,13 @@ const AppLayout = () => {
               >
               {focusMode ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
-              <ProfileDropdown />
+              <button
+                onClick={() => setDrawerOpen(true)}
+                className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary hover:bg-primary/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                aria-label="Open profile"
+              >
+                {initial}
+              </button>
             </div>
           </header>
           <main className={cn("flex-1 p-4 sm:p-6 overflow-auto", isMobile && "pb-20")}>
@@ -61,6 +72,9 @@ const AppLayout = () => {
 
         {/* Pomodoro */}
         <PomodoroTimer />
+
+        {/* Profile Drawer */}
+        <ProfileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
       </div>
     </SidebarProvider>
   );
