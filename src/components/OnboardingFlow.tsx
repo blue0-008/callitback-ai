@@ -143,7 +143,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
   const confettiRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const TOTAL_STEPS = 5;
+  const TOTAL_STEPS = 4;
 
   const next = useCallback(() => {
     setDirection(1);
