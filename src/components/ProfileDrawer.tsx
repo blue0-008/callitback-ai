@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { X, Pencil, Check, Palette, Trash2, RotateCcw, Download, Sun, Moon } from "lucide-react";
+import { X, Pencil, Check, Trash2, RotateCcw, Download, Sun, Moon, Camera } from "lucide-react";
+import UserAvatar, { getAvatarUrl, setAvatarUrl } from "@/components/UserAvatar";
 import { toast } from "@/hooks/use-toast";
 import { getUserName, setUserName } from "@/lib/userPrefs";
 import { getStats } from "@/lib/store";
@@ -41,12 +42,6 @@ function getTodaySessions(): number {
   return stats.heatmap[today] || 0;
 }
 
-function nameToColor(name: string) {
-  let hash = 0;
-  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
-  const hue = ((hash % 360) + 360) % 360;
-  return `hsl(${hue}, 60%, 55%)`;
-}
 
 function formatJoinDate(iso: string) {
   const d = new Date(iso + "T00:00:00");
@@ -66,14 +61,26 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   const [editValue, setEditValue] = useState(name);
   const [clearOpen, setClearOpen] = useState(false);
   const [goal, setGoal] = useState(getDailyGoal());
+  const [avatarKey, setAvatarKey] = useState(0); // force re-render on avatar change
   const inputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const stats = getStats();
   const todaySessions = getTodaySessions();
   const joinDate = getJoinDate();
-  const initial = name.charAt(0).toUpperCase();
-  const avatarColor = nameToColor(name);
   const progress = Math.min((todaySessions / goal) * 100, 100);
+
+  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      setAvatarUrl(base64);
+      setAvatarKey((k) => k + 1);
+    };
+    reader.readAsDataURL(file);
+  };
 
   useEffect(() => {
     if (editing) inputRef.current?.focus();
@@ -163,11 +170,22 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
         <div className="flex-1 overflow-y-auto p-5 space-y-6">
           {/* SECTION 1 — Profile Header */}
           <div className="flex flex-col items-center pt-4 space-y-2">
-            <div
-              className="h-16 w-16 rounded-full flex items-center justify-center text-2xl font-bold text-white shadow-lg"
-              style={{ backgroundColor: avatarColor }}
-            >
-              {initial}
+            <div className="relative">
+              <UserAvatar key={avatarKey} size={80} className="shadow-lg" />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute -bottom-1 -right-1 h-7 w-7 rounded-full bg-secondary border border-border flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-secondary/80 transition-colors"
+                aria-label="Change photo"
+              >
+                <Camera className="h-3.5 w-3.5" />
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={handlePhotoUpload}
+              />
             </div>
 
             <div className="flex items-center gap-1.5">

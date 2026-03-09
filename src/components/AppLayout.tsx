@@ -5,8 +5,8 @@ import { MobileTabBar } from "@/components/MobileTabBar";
 import AnimatedOutlet from "@/components/AnimatedOutlet";
 import PomodoroTimer from "@/components/PomodoroTimer";
 import ProfileDrawer from "@/components/ProfileDrawer";
+import UserAvatar from "@/components/UserAvatar";
 import { useFocusMode } from "@/hooks/useFocusMode";
-import { getUserName } from "@/lib/userPrefs";
 import { Eye, EyeOff } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -15,8 +15,6 @@ const AppLayout = () => {
   const { focusMode, toggleFocus } = useFocusMode();
   const isMobile = useIsMobile();
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const displayName = getUserName() || "User";
-  const initial = displayName.charAt(0).toUpperCase();
 
   return (
     <SidebarProvider>
@@ -55,10 +53,10 @@ const AppLayout = () => {
               </button>
               <button
                 onClick={() => setDrawerOpen(true)}
-                className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center text-xs font-medium text-primary hover:bg-primary/30 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                className="rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 aria-label="Open profile"
               >
-                {initial}
+                <UserAvatar size={32} />
               </button>
             </div>
           </header>
