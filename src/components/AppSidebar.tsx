@@ -1,8 +1,11 @@
-import { LayoutDashboard, BookOpen, HelpCircle, Layers, Zap, Library } from "lucide-react";
+import { LayoutDashboard, BookOpen, HelpCircle, Layers, Zap, Library, Globe } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useLocation } from "react-router-dom";
 import { getDueToday } from "@/lib/store";
 import { useTranslation } from "react-i18next";
+import { useUser, type AppLanguage } from "@/contexts/AvatarContext";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 import {
   Sidebar,
   SidebarContent,
@@ -14,11 +17,21 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar";
 
+const LANGUAGES: { code: AppLanguage; flag: string; label: string }[] = [
+  { code: "en", flag: "🇬🇧", label: "English" },
+  { code: "ar", flag: "🇸🇦", label: "العربية" },
+  { code: "fr", flag: "🇫🇷", label: "Français" },
+  { code: "es", flag: "🇪🇸", label: "Español" },
+];
+
 export function AppSidebar() {
   const { state } = useSidebar();
   const collapsed = state === "collapsed";
   const location = useLocation();
   const { t } = useTranslation();
+  const { language, setLanguage } = useUser();
+
+  const currentLang = LANGUAGES.find((l) => l.code === language) || LANGUAGES[0];
 
   const navItems = [
     { title: t("nav.dashboard"), url: "/dashboard", icon: LayoutDashboard, badge: 0 },
@@ -30,7 +43,7 @@ export function AppSidebar() {
 
   return (
     <Sidebar collapsible="icon" className="border-r-0 rtl:border-r-0 rtl:border-l-0">
-      <SidebarContent className="pt-4">
+      <SidebarContent className="pt-4 flex flex-col h-full">
         {/* Logo */}
         <div className="flex items-center gap-2 px-4 mb-6">
           <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-primary/20">
@@ -78,6 +91,51 @@ export function AppSidebar() {
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Spacer */}
+        <div className="flex-1" />
+
+        {/* Language switcher at bottom */}
+        <div className="px-3 pb-4">
+          <Popover>
+            <PopoverTrigger asChild>
+              <button
+                className={cn(
+                  "flex items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors w-full",
+                  "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                )}
+                aria-label={t("profile.language", "Language")}
+              >
+                <Globe className="h-4 w-4 shrink-0 text-muted-foreground" />
+                {!collapsed && (
+                  <span className="flex items-center gap-1.5">
+                    <span>{currentLang.flag}</span>
+                    <span className="uppercase text-xs">{currentLang.code}</span>
+                  </span>
+                )}
+              </button>
+            </PopoverTrigger>
+            <PopoverContent side="right" align="end" className="w-44 p-2" sideOffset={8}>
+              <div className="space-y-1">
+                {LANGUAGES.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => setLanguage(lang.code)}
+                    className={cn(
+                      "flex items-center gap-2 w-full rounded-md px-3 py-2 text-sm transition-colors",
+                      language === lang.code
+                        ? "bg-primary/15 text-primary font-medium"
+                        : "text-foreground hover:bg-secondary/60"
+                    )}
+                  >
+                    <span>{lang.flag}</span>
+                    <span>{lang.label}</span>
+                  </button>
+                ))}
+              </div>
+            </PopoverContent>
+          </Popover>
+        </div>
       </SidebarContent>
     </Sidebar>
   );
