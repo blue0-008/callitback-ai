@@ -24,12 +24,12 @@
     "days": "días",
     "continueStudying": "Continuar estudiando",
     "nothingYet": "Nada todavía",
-    "startFirstSprint": "¡Empieza tu primer sprint! ⚡",
+    "startFirstSprint": "¡Empieza tu primera sesión! ⚡",
     "goToStudy": "Ir a Estudiar",
     "continue": "Continuar",
     "weakSpots": "Puntos débiles 🎯",
     "noWeakSpots": "Sin puntos débiles. ¡Sigue así! 💪",
-    "startNewSprint": "Nuevo Sprint ⚡"
+    "startNewSprint": "Nueva Sesión ⚡"
   },
   "study": {
     "title": "Generador de estudio IA",
@@ -179,8 +179,8 @@
   },
   "onboarding": {
     "welcomeTo": "Bienvenido a",
-    "appName": "StudySprint AI",
-    "smartestWay": "La forma más inteligente de estudiar. Configuración en 30 segundos.",
+    "appName": "CallItBack",
+    "smartestWay": "Estudia menos. Recuerda más. Configuración en 30 segundos.",
     "letsGo": "¡Vamos! →",
     "skipForNow": "Saltar por ahora",
     "whatCallYou": "¿Cómo debemos llamarte?",
@@ -195,8 +195,8 @@
     "flashcardsDesc": "Repasa los conceptos clave",
     "summaries": "Resúmenes",
     "summariesDesc": "Lee los puntos clave rápidamente",
-    "youReReady": "¡Estás listo/a, {{name}}! ⚡",
-    "studySpaceReady": "Tu espacio de estudio está configurado. ¡A estudiar!",
+    "youReReady": "¡Estás listo/a, {{name}}! Ahora recuérdalo todo. ⚡",
+    "studySpaceReady": "Tu espacio de estudio está configurado. ¡A recordar!",
     "startStudying": "Empezar a estudiar →",
     "tip1": "💡 Consejo: Pega cualquier texto para generar un cuestionario",
     "tip2": "💡 Consejo: Presiona F para modo Focus",
@@ -242,7 +242,7 @@
     "focusTime": "Tiempo de enfoque",
     "breakTime": "Tiempo de descanso",
     "sessionComplete": "🎉 ¡Sesión completada! Es hora del descanso.",
-    "breakOver": "☕ ¡Descanso terminado! ¿Listo para otro sprint?"
+    "breakOver": "☕ ¡Descanso terminado! ¿Listo para otra sesión?"
   },
   "summary": {
     "tldr": "Resumen",

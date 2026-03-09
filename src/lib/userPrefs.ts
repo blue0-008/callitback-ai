@@ -3,11 +3,11 @@
  */
 
 const KEYS = {
-  onboarded: "hasCompletedOnboarding",
-  name: "studysprint_userName",
-  subjects: "studysprint_subjects",
-  studyStyle: "studysprint_studyStyle",
-  preferredMethods: "studysprint_preferred_methods",
+  onboarded: "callitback_onboarding",
+  name: "callitback_userName",
+  subjects: "callitback_subjects",
+  studyStyle: "callitback_studyStyle",
+  preferredMethods: "callitback_preferred_methods",
 } as const;
 
 function read<T>(key: string, fallback: T): T {

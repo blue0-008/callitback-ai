@@ -24,12 +24,12 @@
     "days": "days",
     "continueStudying": "Continue Studying",
     "nothingYet": "Nothing yet",
-    "startFirstSprint": "Start your first sprint! ⚡",
+    "startFirstSprint": "Start your first session! ⚡",
     "goToStudy": "Go to Study",
     "continue": "Continue",
     "weakSpots": "Weak Spots 🎯",
     "noWeakSpots": "No weak spots yet. Keep it up! 💪",
-    "startNewSprint": "Start a New Sprint ⚡"
+    "startNewSprint": "Start a New Session ⚡"
   },
   "study": {
     "title": "AI Study Generator",
@@ -179,8 +179,8 @@
   },
   "onboarding": {
     "welcomeTo": "Welcome to",
-    "appName": "StudySprint AI",
-    "smartestWay": "The smartest way to study anything. Let's get you set up in 30 seconds.",
+    "appName": "CallItBack",
+    "smartestWay": "Study less. Remember more. Let's get you set up in 30 seconds.",
     "letsGo": "Let's Go →",
     "skipForNow": "Skip for now",
     "whatCallYou": "What should we call you?",
@@ -195,8 +195,8 @@
     "flashcardsDesc": "Flip through key concepts",
     "summaries": "Summaries",
     "summariesDesc": "Read the key points fast",
-    "youReReady": "You're ready, {{name}}! ⚡",
-    "studySpaceReady": "Your study space is set up. Time to sprint.",
+    "youReReady": "You're ready, {{name}}! Now go call it back. ⚡",
+    "studySpaceReady": "Your study space is set up. Time to remember everything.",
     "startStudying": "Start Studying →",
     "tip1": "💡 Tip: Paste any text to instantly generate a quiz",
     "tip2": "💡 Tip: Press F for Focus Mode while studying",
@@ -242,7 +242,7 @@
     "focusTime": "Focus Time",
     "breakTime": "Break Time",
     "sessionComplete": "🎉 Study session complete! Time for a break.",
-    "breakOver": "☕ Break over! Ready for another sprint?"
+    "breakOver": "☕ Break over! Ready for another session?"
   },
   "summary": {
     "tldr": "TL;DR",

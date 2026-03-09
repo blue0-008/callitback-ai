@@ -51,9 +51,12 @@ export function AppSidebar() {
             <Zap className="w-4 h-4 text-primary" />
           </div>
           {!collapsed && (
-            <span className="font-heading text-base font-bold text-foreground tracking-tight">
-              StudySprint
-            </span>
+            <div className="flex flex-col">
+              <span className="font-heading text-base font-bold text-foreground tracking-tight">
+                CallItBack
+              </span>
+              <span className="text-[10px] text-muted-foreground leading-tight">Study less. Remember more.</span>
+            </div>
           )}
         </div>
 

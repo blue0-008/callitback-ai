@@ -5,7 +5,7 @@ import ar from "@/locales/ar.json";
 import fr from "@/locales/fr.json";
 import es from "@/locales/es.json";
 
-const savedLang = localStorage.getItem("studysprint_language") || "en";
+const savedLang = localStorage.getItem("callitback_language") || "en";
 
 i18n.use(initReactI18next).init({
   resources: {

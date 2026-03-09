@@ -32,9 +32,9 @@ type LibraryItem = {
 };
 
 const STORAGE_KEYS = {
-  summaries: "studysprint_summaries",
-  quizzes: "studysprint_quizzes",
-  decks: "studysprint_decks",
+  summaries: "callitback_summaries",
+  quizzes: "callitback_quizzes",
+  decks: "callitback_decks",
 } as const;
 
 function readStorage<T>(key: string, fallback: T): T {
@@ -178,14 +178,14 @@ const Library = () => {
       const next = quizzes.filter((q) => q.id !== item.id);
       setQuizzes(next);
       localStorage.setItem(STORAGE_KEYS.quizzes, JSON.stringify(next));
-      localStorage.removeItem(`studysprint_quiz_data_${item.id}`);
+      localStorage.removeItem(`callitback_quiz_data_${item.id}`);
       return;
     }
 
     const next = decks.filter((d) => d.id !== item.id);
     setDecks(next);
     localStorage.setItem(STORAGE_KEYS.decks, JSON.stringify(next));
-    localStorage.removeItem(`studysprint_deck_data_${item.id}`);
+    localStorage.removeItem(`callitback_deck_data_${item.id}`);
   };
 
   return (

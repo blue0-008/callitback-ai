@@ -10,7 +10,7 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 
 function loadDeckCards(id: string): Flashcard[] {
   try {
-    const raw = localStorage.getItem(`studysprint_deck_data_${id}`);
+    const raw = localStorage.getItem(`callitback_deck_data_${id}`);
     return raw ? JSON.parse(raw) : [];
   } catch {
     return [];

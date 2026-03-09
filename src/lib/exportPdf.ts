@@ -34,7 +34,7 @@ export async function generateExportPdf() {
   // ── Title ──
   doc.setFontSize(20);
   doc.setFont("helvetica", "bold");
-  doc.text("StudySprint — My Data Export", 14, y);
+  doc.text("CallItBack — My Data Export", 14, y);
   y += 6;
   doc.setFontSize(9);
   doc.setFont("helvetica", "normal");
@@ -43,7 +43,7 @@ export async function generateExportPdf() {
 
   // ── Section 1: Profile ──
   const name = getUserName() || "User";
-  const joinDate = localStorage.getItem("studysprint_joinDate") || "—";
+  const joinDate = localStorage.getItem("callitback_joinDate") || "—";
   const stats = getStats();
   y = sectionTitle(doc, "1. Profile Summary", y);
   doc.setFontSize(10);
@@ -105,7 +105,7 @@ export async function generateExportPdf() {
 
       // load individual questions
       try {
-        const raw = localStorage.getItem(`studysprint_quiz_data_${q.id}`);
+        const raw = localStorage.getItem(`callitback_quiz_data_${q.id}`);
         if (raw) {
           const questions = JSON.parse(raw) as { question: string; correct_answer?: string; correctAnswer?: string }[];
           doc.setFontSize(9);
@@ -143,7 +143,7 @@ export async function generateExportPdf() {
       y += 5;
 
       try {
-        const raw = localStorage.getItem(`studysprint_deck_data_${d.id}`);
+        const raw = localStorage.getItem(`callitback_deck_data_${d.id}`);
         if (raw) {
           const cards = JSON.parse(raw) as { front: string; back: string }[];
           doc.setFontSize(9);
@@ -160,5 +160,5 @@ export async function generateExportPdf() {
     }
   }
 
-  doc.save("StudySprint_Export.pdf");
+  doc.save("CallItBack_Export.pdf");
 }

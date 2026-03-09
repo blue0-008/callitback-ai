@@ -299,7 +299,7 @@ const Study = () => {
             explanation: q.explanation,
             isRtl: activeLang === "ar",
           }));
-          localStorage.setItem(`studysprint_quiz_data_${quizId}`, JSON.stringify(questions));
+          localStorage.setItem(`callitback_quiz_data_${quizId}`, JSON.stringify(questions));
           const quizzes = getQuizzes();
           const topic = subject ? `${subject.subject} Quiz` : "Study Quiz";
           quizzes.unshift({ id: quizId, title: topic, questions: questions.length, duration: `${Math.ceil(questions.length * 1.5)} min`, completed: false, createdAt: new Date().toISOString() });
@@ -319,7 +319,7 @@ const Study = () => {
             definition: c.back,
             isRtl: activeLang === "ar",
           }));
-          localStorage.setItem(`studysprint_deck_data_${deckId}`, JSON.stringify(cards));
+          localStorage.setItem(`callitback_deck_data_${deckId}`, JSON.stringify(cards));
           const decks = getDecks();
           const deckTitle = subject ? `${subject.subject} Flashcards` : "Study Flashcards";
           decks.unshift({ id: deckId, title: deckTitle, subject: subject?.subject ?? "General", cards: cards.length, mastered: 0, dueToday: cards.length, createdAt: new Date().toISOString() });
