@@ -235,7 +235,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
       )}
 
       {/* Back button */}
-      {step >= 2 && step <= 4 && (
+      {step >= 2 && step <= 3 && (
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
