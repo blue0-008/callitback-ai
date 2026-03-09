@@ -15,6 +15,8 @@ import { useUser } from "@/contexts/AvatarContext";
 const AppLayout = () => {
   const { focusMode, toggleFocus } = useFocusMode();
   const isMobile = useIsMobile();
+  const { language } = useUser();
+  const isRtl = language === "ar";
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   return (
