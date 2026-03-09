@@ -71,16 +71,9 @@ const ProfileDrawer = ({ open, onClose }: Props) => {
   const joinDate = getJoinDate();
   const progress = Math.min((todaySessions / goal) * 100, 100);
 
-  const handlePhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      const base64 = reader.result as string;
-      setAvatarUrl(base64);
-      setAvatarKey((k) => k + 1);
-    };
-    reader.readAsDataURL(file);
+  const handleAvatarSave = (url: string) => {
+    setAvatarUrl(url);
+    setAvatarKey((k) => k + 1);
   };
 
   useEffect(() => {
