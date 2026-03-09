@@ -27,6 +27,7 @@ interface FlashcardPlayerProps {
   deckTitle: string;
   cards: Flashcard[];
   onExit: () => void;
+  onComplete?: (masteredCount: number, totalReviewed: number) => void;
 }
 
 /* ── Progress ring (reused pattern) ────────────── */
