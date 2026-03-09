@@ -195,7 +195,7 @@ const OnboardingFlow = ({ onComplete }: OnboardingFlowProps) => {
 
   // Confetti on final step
   useEffect(() => {
-    if (step === 4 && confettiRef.current) {
+    if (step === 3 && confettiRef.current) {
       setTimeout(() => {
         if (confettiRef.current) {
           for (let burst = 0; burst < 3; burst++) {
