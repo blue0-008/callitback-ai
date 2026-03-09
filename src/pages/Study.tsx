@@ -11,6 +11,7 @@ import {
   HelpCircle,
   Layers,
   RotateCcw,
+  MapPin,
 } from "lucide-react";
 import GlassCard from "@/components/GlassCard";
 import { Button } from "@/components/ui/button";
@@ -21,6 +22,8 @@ import { getQuizzes, saveQuizzes, getDecks, saveDecks, addSession } from "@/lib/
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { useUser, type AppLanguage } from "@/contexts/AvatarContext";
+import { useTranslation } from "react-i18next";
 
 /* ── Types ─────────────────────────────────────── */
 
@@ -40,9 +43,24 @@ interface GeneratedOutput {
   quizCount?: number;
   deckCount?: number;
   subject?: DetectedSubject;
+  outputLanguage?: AppLanguage;
 }
 
 /* ── Constants ─────────────────────────────────── */
+
+const LANG_OPTIONS: { code: AppLanguage; flag: string; label: string }[] = [
+  { code: "en", flag: "🇬🇧", label: "English" },
+  { code: "ar", flag: "🇸🇦", label: "العربية" },
+  { code: "fr", flag: "🇫🇷", label: "Français" },
+  { code: "es", flag: "🇪🇸", label: "Español" },
+];
+
+const LANG_LABELS: Record<AppLanguage, string> = {
+  en: "English",
+  ar: "Arabic",
+  fr: "French",
+  es: "Spanish",
+};
 
 const sourceTypes = [
   { key: "text" as SourceType, label: "Text", icon: "📝" },
@@ -76,16 +94,18 @@ async function callStudyAI(params: Record<string, unknown>): Promise<string> {
   return data?.result ?? "";
 }
 
-/* ── Markdown-ish summary renderer ──────────────── */
+/* ── Arabic RTL text wrapper ─────────────────────── */
 
-function renderSummaryText(text: string) {
+function isArabic(lang: AppLanguage) { return lang === "ar"; }
+
+function renderSummaryText(text: string, lang: AppLanguage = "en") {
+  const rtl = isArabic(lang);
   const lines = text.split("\n").filter(Boolean);
   return lines.map((line, i) => {
-    // bullet bold keyword: text
     const bulletMatch = line.match(/^[•\-\*]\s+\*\*(.+?)\*\*:\s*(.+)$/);
     if (bulletMatch) {
       return (
-        <div key={i} className="flex items-start gap-2 text-xs leading-relaxed">
+        <div key={i} className={cn("flex items-start gap-2 text-xs leading-relaxed", rtl && "flex-row-reverse text-right font-cairo")}>
           <span className="mt-1 h-1.5 w-1.5 rounded-full bg-primary shrink-0 mt-1.5" />
           <span>
             <span className="font-semibold text-foreground">{bulletMatch[1]}: </span>
@@ -94,15 +114,17 @@ function renderSummaryText(text: string) {
         </div>
       );
     }
-    // heading line (### or **)
     if (line.startsWith("###") || (line.startsWith("**") && line.endsWith("**"))) {
       const heading = line.replace(/^#+\s*/, "").replace(/\*\*/g, "");
-      return <h3 key={i} className="text-sm font-heading font-semibold text-foreground mt-4 mb-1">{heading}</h3>;
+      return (
+        <h3 key={i} className={cn("text-sm font-heading font-semibold text-foreground mt-4 mb-1", rtl && "text-right font-cairo")}>
+          {heading}
+        </h3>
+      );
     }
-    // plain line with inline bold
     const parts = line.split(/(\*\*[^*]+\*\*)/g);
     return (
-      <p key={i} className="text-xs leading-relaxed text-foreground/80">
+      <p key={i} className={cn("text-xs leading-relaxed text-foreground/80", rtl && "text-right font-cairo")}>
         {parts.map((part, j) =>
           part.startsWith("**") && part.endsWith("**")
             ? <span key={j} className="font-semibold text-foreground">{part.slice(2, -2)}</span>
@@ -113,14 +135,52 @@ function renderSummaryText(text: string) {
   });
 }
 
+/* ── Language Selector ─────────────────────────── */
+
+function LanguageSelector({
+  value,
+  onChange,
+  label,
+}: {
+  value: AppLanguage;
+  onChange: (l: AppLanguage) => void;
+  label?: string;
+}) {
+  return (
+    <div className="flex items-center gap-2 flex-wrap">
+      {label && <span className="text-xs text-muted-foreground whitespace-nowrap">{label}</span>}
+      <div className="flex gap-1">
+        {LANG_OPTIONS.map((l) => (
+          <button
+            key={l.code}
+            onClick={() => onChange(l.code)}
+            title={l.label}
+            className={cn(
+              "h-8 w-8 rounded-lg text-sm flex items-center justify-center border transition-all duration-150",
+              value === l.code
+                ? "border-primary/60 bg-primary/15 shadow-[0_0_8px_hsl(var(--primary)/0.2)]"
+                : "border-border/30 bg-secondary/40 hover:border-border/60 hover:bg-secondary/60"
+            )}
+          >
+            {l.flag}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /* ── Component ─────────────────────────────────── */
 
 const Study = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { language: appLanguage } = useUser();
+  const { t } = useTranslation();
 
   const [source, setSource] = useState<SourceType>("text");
   const [content, setContent] = useState("");
+  const [youtubeUrl, setYoutubeUrl] = useState("");
   const [selectedModes, setSelectedModes] = useState<Set<OutputMode>>(() => {
     const saved = getPreferredMethods();
     const valid = saved.filter((m): m is OutputMode => ["summary", "quiz", "flashcards"].includes(m));
@@ -134,6 +194,17 @@ const Study = () => {
   const [output, setOutput] = useState<GeneratedOutput | null>(null);
   const [activeOutputTab, setActiveOutputTab] = useState<OutputMode>("summary");
   const [activeSummaryTab, setActiveSummaryTab] = useState<SummaryTab>("tldr");
+
+  // Language state
+  const [outputLanguage, setOutputLanguage] = useState<AppLanguage>(appLanguage);
+  const [detectedInputLang, setDetectedInputLang] = useState<AppLanguage | null>(null);
+  const [youtubeLang, setYoutubeLang] = useState<AppLanguage>(appLanguage);
+
+  // Keep outputLanguage in sync with app language when app language changes
+  useEffect(() => {
+    setOutputLanguage(appLanguage);
+    setYoutubeLang(appLanguage);
+  }, [appLanguage]);
 
   // Loading message cycle
   useEffect(() => {
@@ -151,11 +222,38 @@ const Study = () => {
     });
   }, []);
 
-  const handleGenerate = async () => {
-    const trimmed = content.trim();
-    if (!trimmed && source === "text") return;
+  // Auto-detect input language when content changes (debounced)
+  useEffect(() => {
+    if (source !== "text" || content.trim().length < 80) {
+      setDetectedInputLang(null);
+      return;
+    }
+    const timer = setTimeout(async () => {
+      try {
+        const raw = await callStudyAI({ type: "detect-language", content: content.trim().slice(0, 300) });
+        const clean = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
+        const parsed = JSON.parse(clean);
+        const detectedCode = parsed.language as AppLanguage;
+        if (["en", "ar", "fr", "es"].includes(detectedCode) && parsed.confidence !== "low") {
+          setDetectedInputLang(detectedCode);
+          setOutputLanguage(detectedCode);
+        } else {
+          setDetectedInputLang(null);
+        }
+      } catch {
+        setDetectedInputLang(null);
+      }
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [content, source]);
 
-    if (trimmed.length < 50) {
+  const handleGenerate = async () => {
+    const activeContent = source === "youtube" ? youtubeUrl.trim() : content.trim();
+    const activeLang = source === "youtube" ? youtubeLang : outputLanguage;
+
+    if (!activeContent && source === "text") return;
+
+    if (source === "text" && content.trim().length < 50) {
       toast({ title: "Content too short", description: "Please add more content for better results", variant: "destructive" });
       return;
     }
@@ -166,87 +264,65 @@ const Study = () => {
     setDetectedSubject(null);
 
     try {
-      // Step 1 — detect subject
       let subject: DetectedSubject | null = null;
       try {
-        const raw = await callStudyAI({ type: "detect-subject", content: trimmed });
+        const raw = await callStudyAI({ type: "detect-subject", content: content.trim() });
         const clean = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
         subject = JSON.parse(clean);
         setDetectedSubject(subject);
       } catch {
-        // non-critical — continue
+        // non-critical
       }
 
       const modes = Array.from(selectedModes);
-      const result: GeneratedOutput = { subject: subject ?? undefined };
+      const result: GeneratedOutput = { subject: subject ?? undefined, outputLanguage: activeLang };
 
-      // Step 2 — run selected modes in parallel
       const tasks = modes.map(async (mode) => {
         if (mode === "summary") {
-          // Fetch all 3 summary styles in parallel
           const [tldrRaw, deepRaw, feynRaw] = await Promise.all([
-            callStudyAI({ type: "summary", content: trimmed, summaryStyle: "tldr" }),
-            callStudyAI({ type: "summary", content: trimmed, summaryStyle: "deepDive" }),
-            callStudyAI({ type: "summary", content: trimmed, summaryStyle: "feynman" }),
+            callStudyAI({ type: "summary", content: content.trim(), summaryStyle: "tldr", outputLanguage: activeLang }),
+            callStudyAI({ type: "summary", content: content.trim(), summaryStyle: "deepDive", outputLanguage: activeLang }),
+            callStudyAI({ type: "summary", content: content.trim(), summaryStyle: "feynman", outputLanguage: activeLang }),
           ]);
           result.summary = { tldr: tldrRaw, deepDive: deepRaw, feynman: feynRaw };
         }
 
         if (mode === "quiz") {
-          const raw = await callStudyAI({ type: "quiz", content: trimmed, difficulty, questionCount: 10 });
+          const raw = await callStudyAI({ type: "quiz", content: content.trim(), difficulty, questionCount: 10, outputLanguage: activeLang });
           const clean = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
           const parsed = JSON.parse(clean) as { quiz: QuizItem[] };
           const quizId = `quiz_${Date.now()}`;
-          // Convert to QuizPlayer format and save
           const questions = parsed.quiz.map((q) => ({
             question: q.question,
             options: [q.options.A, q.options.B, q.options.C, q.options.D],
             correctIndex: ["A", "B", "C", "D"].indexOf(q.correct),
             explanation: q.explanation,
+            isRtl: activeLang === "ar",
           }));
-          // Save quiz data
           localStorage.setItem(`studysprint_quiz_data_${quizId}`, JSON.stringify(questions));
-          // Save quiz metadata
           const quizzes = getQuizzes();
           const topic = subject ? `${subject.subject} Quiz` : "Study Quiz";
-          quizzes.unshift({
-            id: quizId,
-            title: topic,
-            questions: questions.length,
-            duration: `${Math.ceil(questions.length * 1.5)} min`,
-            completed: false,
-            createdAt: new Date().toISOString(),
-          });
+          quizzes.unshift({ id: quizId, title: topic, questions: questions.length, duration: `${Math.ceil(questions.length * 1.5)} min`, completed: false, createdAt: new Date().toISOString() });
           saveQuizzes(quizzes);
           result.quizId = quizId;
           result.quizCount = questions.length;
         }
 
         if (mode === "flashcards") {
-          const raw = await callStudyAI({ type: "flashcards", content: trimmed, cardCount: 20 });
+          const raw = await callStudyAI({ type: "flashcards", content: content.trim(), cardCount: 20, outputLanguage: activeLang });
           const clean = raw.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
           const parsed = JSON.parse(clean) as { flashcards: FlashcardItem[] };
           const deckId = `deck_${Date.now()}`;
-          // Convert to Flashcard format
           const cards = parsed.flashcards.map((c, idx) => ({
             id: `${deckId}_${idx}`,
             term: c.front,
             definition: c.back,
+            isRtl: activeLang === "ar",
           }));
-          // Save deck data
           localStorage.setItem(`studysprint_deck_data_${deckId}`, JSON.stringify(cards));
-          // Save deck metadata
           const decks = getDecks();
           const deckTitle = subject ? `${subject.subject} Flashcards` : "Study Flashcards";
-          decks.unshift({
-            id: deckId,
-            title: deckTitle,
-            subject: subject?.subject ?? "General",
-            cards: cards.length,
-            mastered: 0,
-            dueToday: cards.length,
-            createdAt: new Date().toISOString(),
-          });
+          decks.unshift({ id: deckId, title: deckTitle, subject: subject?.subject ?? "General", cards: cards.length, mastered: 0, dueToday: cards.length, createdAt: new Date().toISOString() });
           saveDecks(decks);
           result.deckId = deckId;
           result.deckCount = cards.length;
@@ -255,10 +331,9 @@ const Study = () => {
 
       await Promise.all(tasks);
 
-      // Record study session
       addSession({
         id: `session_${Date.now()}`,
-        topic: subject ? `${subject.subject} — ${trimmed.slice(0, 40)}...` : trimmed.slice(0, 60),
+        topic: subject ? `${subject.subject} — ${content.trim().slice(0, 40)}...` : content.trim().slice(0, 60),
         subject: subject?.subject ?? "General",
         date: new Date().toISOString(),
         type: modes.length > 1 ? "summary + quiz" : (modes[0] as "summary" | "quiz" | "flashcards"),
@@ -273,11 +348,7 @@ const Study = () => {
       } else if (msg === "PAYMENT_REQUIRED") {
         toast({ title: "Credits needed", description: "Add credits in your workspace settings to continue.", variant: "destructive" });
       } else {
-        toast({
-          title: "Generation failed — try again",
-          description: "Something went wrong. Check your input and retry.",
-          variant: "destructive",
-        });
+        toast({ title: "Generation failed — try again", description: "Something went wrong. Check your input and retry.", variant: "destructive" });
       }
     } finally {
       setGenerating(false);
@@ -291,6 +362,8 @@ const Study = () => {
 
   const modesArr = Array.from(selectedModes);
   const hasMultipleOutputs = modesArr.length > 1;
+  const outputLang = output?.outputLanguage ?? "en";
+  const isOutputArabic = outputLang === "ar";
 
   return (
     <motion.div
@@ -359,12 +432,22 @@ const Study = () => {
               </div>
             )}
             {source === "youtube" && (
-              <div className="h-44 flex flex-col justify-center gap-3">
-                <label className="text-xs text-muted-foreground">YouTube Video URL</label>
-                <input
-                  type="url"
-                  placeholder="https://youtube.com/watch?v=..."
-                  className="w-full bg-secondary/50 border border-border/40 rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 transition-colors"
+              <div className="h-44 flex flex-col justify-center gap-4">
+                <div className="space-y-1">
+                  <label className="text-xs text-muted-foreground">YouTube Video URL</label>
+                  <input
+                    type="url"
+                    value={youtubeUrl}
+                    onChange={(e) => setYoutubeUrl(e.target.value)}
+                    placeholder="https://youtube.com/watch?v=..."
+                    className="w-full bg-secondary/50 border border-border/40 rounded-lg px-3 py-2.5 text-sm placeholder:text-muted-foreground/50 focus:outline-none focus:border-primary/50 transition-colors"
+                  />
+                </div>
+                {/* YouTube language selector */}
+                <LanguageSelector
+                  value={youtubeLang}
+                  onChange={setYoutubeLang}
+                  label="Transcribe & summarize in:"
                 />
               </div>
             )}
@@ -386,6 +469,24 @@ const Study = () => {
                 </motion.div>
               )}
             </AnimatePresence>
+
+            {/* Detected input language chip */}
+            <AnimatePresence>
+              {detectedInputLang && source === "text" && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  className="overflow-hidden"
+                >
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-accent/10 border border-accent/25 px-3 py-1 text-xs font-medium text-foreground">
+                    <MapPin className="h-3 w-3 text-accent" />
+                    {LANG_OPTIONS.find(l => l.code === detectedInputLang)?.flag}{" "}
+                    {LANG_LABELS[detectedInputLang]} detected — generating in {LANG_LABELS[detectedInputLang]}
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </GlassCard>
 
           {/* Output mode selectors */}
@@ -398,7 +499,7 @@ const Study = () => {
                   onClick={() => toggleMode(m.key)}
                   className={cn(
                     "glass rounded-lg p-3 text-left transition-all duration-200 border",
-                    active ? "border-primary/50 bg-primary/10 shadow-[0_0_15px_hsl(38_92%_50%/0.15)]" : "border-border/30 hover:border-border/60"
+                    active ? "border-primary/50 bg-primary/10 shadow-[0_0_15px_hsl(var(--primary)/0.15)]" : "border-border/30 hover:border-border/60"
                   )}
                 >
                   <span className="text-lg">{m.icon}</span>
@@ -409,10 +510,19 @@ const Study = () => {
             })}
           </div>
 
-          {/* Spacer + divider */}
-          <div className="pt-4 pb-2">
+          {/* Divider */}
+          <div className="pt-2 pb-1">
             <div className="border-t border-border/30" />
           </div>
+
+          {/* Output Language selector (only for text/pdf) */}
+          {source !== "youtube" && (
+            <LanguageSelector
+              value={outputLanguage}
+              onChange={(l) => { setOutputLanguage(l); setDetectedInputLang(null); }}
+              label="Output Language"
+            />
+          )}
 
           {/* Generate button */}
           <Tooltip>
@@ -420,11 +530,11 @@ const Study = () => {
               <span className="w-full">
                 <button
                   onClick={handleGenerate}
-                  disabled={generating || (!content.trim() && source === "text")}
+                  disabled={generating || (!content.trim() && source === "text") || selectedModes.size === 0}
                   className={cn(
                     "w-full relative overflow-hidden rounded-lg px-6 py-5 text-sm font-semibold transition-all duration-300",
                     "bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground",
-                    "hover:shadow-[0_0_30px_hsl(38_92%_50%/0.4)] hover:scale-[1.01]",
+                    "hover:shadow-[0_0_30px_hsl(var(--primary)/0.4)] hover:scale-[1.01]",
                     "disabled:opacity-50 disabled:hover:shadow-none disabled:hover:scale-100 disabled:cursor-not-allowed",
                     "flex items-center justify-center gap-2",
                     generating && "animate-pulse"
@@ -545,9 +655,8 @@ const Study = () => {
                 )}
 
                 {/* Summary output */}
-                {!generating && output && (activeOutputTab === "summary" || !hasMultipleOutputs && selectedModes.has("summary")) && output.summary && (
+                {!generating && output && (activeOutputTab === "summary" || (!hasMultipleOutputs && selectedModes.has("summary"))) && output.summary && (
                   <motion.div key="summary-out" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="h-full flex flex-col gap-4">
-                    {/* Summary tab bar */}
                     <div className="flex gap-1 bg-secondary/40 rounded-lg p-0.5 w-fit">
                       {[
                         { key: "tldr" as SummaryTab, label: "TL;DR", icon: "⚡" },
@@ -570,27 +679,31 @@ const Study = () => {
                         animate={{ opacity: 1, x: 0 }}
                         exit={{ opacity: 0, x: 10 }}
                         transition={{ duration: 0.2 }}
-                        className="space-y-2 flex-1 overflow-auto pr-1"
+                        className={cn("space-y-2 flex-1 overflow-auto pr-1", isOutputArabic && "direction-rtl")}
+                        dir={isOutputArabic ? "rtl" : "ltr"}
                       >
-                        {renderSummaryText(output.summary[activeSummaryTab] ?? "")}
+                        {renderSummaryText(output.summary[activeSummaryTab] ?? "", outputLang as AppLanguage)}
                       </motion.div>
                     </AnimatePresence>
                   </motion.div>
                 )}
 
                 {/* Quiz output */}
-                {!generating && output && (activeOutputTab === "quiz" || !hasMultipleOutputs && selectedModes.has("quiz")) && output.quizId && (
+                {!generating && output && (activeOutputTab === "quiz" || (!hasMultipleOutputs && selectedModes.has("quiz"))) && output.quizId && (
                   <motion.div key="quiz-out" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex flex-col items-center justify-center gap-4 py-12">
                     <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
                       <HelpCircle className="h-8 w-8 text-emerald-400" />
                     </div>
                     <div className="text-center space-y-1">
                       <h3 className="text-base font-heading font-semibold">Quiz Ready! 🧠</h3>
-                      <p className="text-xs text-muted-foreground">{output.quizCount} questions · {difficulty} difficulty</p>
+                      <p className="text-xs text-muted-foreground">
+                        {output.quizCount} questions · {difficulty} difficulty
+                        {isOutputArabic && " · عربي"}
+                      </p>
                     </div>
                     <button
                       onClick={() => navigate(`/quiz?id=${output.quizId}`)}
-                      className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(38_92%_50%/0.3)] hover:scale-[1.01] transition-all"
+                      className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold bg-gradient-to-r from-primary via-primary/90 to-primary text-primary-foreground hover:shadow-[0_0_30px_hsl(var(--primary)/0.3)] hover:scale-[1.01] transition-all"
                     >
                       Start Now <ArrowRight className="h-4 w-4" />
                     </button>
@@ -598,18 +711,21 @@ const Study = () => {
                 )}
 
                 {/* Flashcards output */}
-                {!generating && output && (activeOutputTab === "flashcards" || !hasMultipleOutputs && selectedModes.has("flashcards")) && output.deckId && (
+                {!generating && output && (activeOutputTab === "flashcards" || (!hasMultipleOutputs && selectedModes.has("flashcards"))) && output.deckId && (
                   <motion.div key="deck-out" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }} className="flex flex-col items-center justify-center gap-4 py-12">
                     <div className="w-16 h-16 rounded-2xl bg-accent/10 flex items-center justify-center">
                       <Layers className="h-8 w-8 text-accent" />
                     </div>
                     <div className="text-center space-y-1">
                       <h3 className="text-base font-heading font-semibold">Deck Ready! 🃏</h3>
-                      <p className="text-xs text-muted-foreground">{output.deckCount} flashcards generated</p>
+                      <p className="text-xs text-muted-foreground">
+                        {output.deckCount} flashcards generated
+                        {isOutputArabic && " · عربي"}
+                      </p>
                     </div>
                     <button
                       onClick={() => navigate(`/flashcards?id=${output.deckId}`)}
-                      className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold bg-gradient-to-r from-accent via-accent/90 to-accent text-accent-foreground hover:shadow-[0_0_30px_hsl(38_92%_50%/0.3)] hover:scale-[1.01] transition-all"
+                      className="flex items-center gap-2 rounded-xl px-6 py-3 text-sm font-semibold bg-gradient-to-r from-accent via-accent/90 to-accent text-accent-foreground hover:shadow-[0_0_30px_hsl(var(--primary)/0.3)] hover:scale-[1.01] transition-all"
                     >
                       Study Now <ArrowRight className="h-4 w-4" />
                     </button>
