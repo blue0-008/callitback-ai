@@ -96,9 +96,12 @@ const Dashboard = () => {
       <motion.div variants={item} className="glass rounded-xl p-6 sm:p-8 relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/8 via-transparent to-accent/5 pointer-events-none" />
         <div className="relative space-y-2">
-          <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
-            {getGreeting()}, {getUserName() || "Hey there"} <Zap className="h-6 w-6 text-primary animate-pulse" />
-          </h1>
+          <div className="flex items-center gap-3">
+            <UserAvatar size={48} />
+            <h1 className="text-2xl sm:text-3xl font-heading font-bold tracking-tight flex items-center gap-2">
+              {getGreeting()}, {getUserName() || "Hey there"} <Zap className="h-6 w-6 text-primary animate-pulse" />
+            </h1>
+          </div>
           {stats.streak > 0 ? (
             <div className="flex items-center gap-2">
               <Flame className="h-5 w-5 text-orange-500" />
