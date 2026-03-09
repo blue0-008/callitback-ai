@@ -5,7 +5,6 @@ import { useUser } from "@/contexts/AvatarContext";
 import AvatarPickerModal from "@/components/AvatarPickerModal";
 import { toast } from "@/hooks/use-toast";
 import { getStats } from "@/lib/store";
-import { getStats } from "@/lib/store";
 import { Progress } from "@/components/ui/progress";
 import {
   AlertDialog,
