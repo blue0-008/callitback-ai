@@ -8,47 +8,29 @@ export function getAvatarUrl(): string | null {
   return localStorage.getItem(AVATAR_KEY);
 }
 
-export function setAvatarUrl(base64: string) {
-  localStorage.setItem(AVATAR_KEY, base64);
+export function setAvatarUrl(url: string) {
+  localStorage.setItem(AVATAR_KEY, url);
 }
 
 export function clearAvatarUrl() {
   localStorage.removeItem(AVATAR_KEY);
 }
 
-function getDiceBearUrl(name: string) {
-  return `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(name)}`;
-}
-
 interface UserAvatarProps {
-  size?: number; // px
+  size?: number;
   className?: string;
 }
 
 const UserAvatar = ({ size = 36, className }: UserAvatarProps) => {
-  const customAvatar = getAvatarUrl();
+  const savedAvatar = getAvatarUrl();
   const name = getUserName();
-
-  const sizeClass = `h-[${size}px] w-[${size}px]`;
   const style = { width: size, height: size, minWidth: size, minHeight: size };
 
-  // Priority 1: uploaded photo
-  if (customAvatar) {
+  // Priority 1 & 2: user has explicitly set an avatar (uploaded photo or DiceBear selection)
+  if (savedAvatar) {
     return (
       <img
-        src={customAvatar}
-        alt="Avatar"
-        className={cn("rounded-full object-cover", className)}
-        style={style}
-      />
-    );
-  }
-
-  // Priority 2: DiceBear based on name
-  if (name) {
-    return (
-      <img
-        src={getDiceBearUrl(name)}
+        src={savedAvatar}
         alt="Avatar"
         className={cn("rounded-full object-cover bg-secondary", className)}
         style={style}
@@ -56,7 +38,21 @@ const UserAvatar = ({ size = 36, className }: UserAvatarProps) => {
     );
   }
 
-  // Priority 3: default ⚡ icon
+  // Priority 3: show user's first initial
+  if (name) {
+    const initial = name.charAt(0).toUpperCase();
+    const fontSize = Math.round(size * 0.42);
+    return (
+      <div
+        className={cn("rounded-full flex items-center justify-center font-bold", className)}
+        style={{ ...style, backgroundColor: "#F59E0B", color: "#0F1117", fontSize }}
+      >
+        {initial}
+      </div>
+    );
+  }
+
+  // Priority 4: no name, no avatar — show ⚡
   return (
     <div
       className={cn("rounded-full bg-primary/20 flex items-center justify-center", className)}
