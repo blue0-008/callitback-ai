@@ -57,12 +57,18 @@ const Quiz = () => {
         questions={quizQuestions}
         timerEnabled={timerEnabled}
         onExit={() => {
-          // Mark as completed
+          // Mark as completed and update stats
           const updated = getQuizzes().map((q) =>
             q.id === activeQuiz ? { ...q, completed: true } : q
           );
           saveQuizzes(updated);
           setQuizzes(updated);
+          
+          // Increment totalQuizzesTaken stat
+          const stats = getStats();
+          stats.totalQuizzesTaken++;
+          saveStats(stats);
+          
           setActiveQuiz(null);
           navigate("/quiz", { replace: true });
         }}
